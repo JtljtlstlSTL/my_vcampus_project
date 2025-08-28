@@ -81,13 +81,13 @@
      #注意用管理员
      #新建入站规则
      New-NetFirewallRule -DisplayName "MySQL Remote Access" -Direction Inbound -Protocol TCP -LocalPort 3306 -Action Allow
+     #netsh advfirewall firewall add rule name="MySQL" dir=in action=allow protocol=TCP localport=3306
      #检验规则是否有效
      Get-NetFirewallRule -DisplayName "MySQL"
      ```
    在终端输入以下命令以检验
     ```powershell
      netstat -ano | findstr :3306
-     #netsh advfirewall firewall add rule name="MySQL" dir=in action=allow protocol=TCP localport=3306
     ```
     检验端口是否开放
   ```powershell
@@ -113,4 +113,6 @@
     ```
     
    - VPN
+     WireGuard 或 Tailscale
+     
    - SSH 
