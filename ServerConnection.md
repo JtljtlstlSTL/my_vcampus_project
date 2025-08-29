@@ -98,8 +98,8 @@
    
    - 打开/关闭防火墙
     ```powershell
-    netsh advfirewall set allprofiles state off
     netsh advfirewall set allprofiles state on
+    netsh advfirewall set allprofiles state off
     ```
 
    - 局域网连接
