@@ -90,9 +90,9 @@
      netstat -ano | findstr :3306
     ```
     检验端口是否开放
-  ```powershell
+    ```powershell
      Test-NetConnection -ComputerName 10.203.251.171 -Port 3306
-  ```
+    ```
 
 5. **客户端电脑B进行连接测试**
    
