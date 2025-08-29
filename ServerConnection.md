@@ -115,4 +115,49 @@
    - VPN
      WireGuard 或 Tailscale
      
-   - SSH 
+   - SSH
+  
+     (1)确保服务器开启了 SSH 服务
+     确认Windows上OpenSSH Server已安装并启用
+    ```powershell
+     Get-Service sshd
+    ```
+    
+    如果没有则执行
+    
+    ```powershell
+     Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+     Start-Service sshd
+     Set-Service -Name sshd -StartupType Automatic
+    ```
+
+    开放防火墙端口22
+
+    ```powershell
+     New-NetFirewallRule -Name sshd -DisplayName "OpenSSH Server (sshd)" -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
+    ```
+
+    (2)保证 MySQL 只监听本地
+    ```ini
+     bind-address = 127.0.0.1
+    ```
+
+    (3)在本地建立SSH通道
+    服务器测试本地SSH
+    ```powershell
+       ssh your_user@localhost
+    ```
+    客户端连接
+   ```powershell
+      #局域网IP
+      ssh your_user@192.168.1.100
+   ```
+
+   客户端建立ssh隧道并连接MySQL
+    ```powershell
+       ssh -L 3307:127.0.0.1:3306 Administrator@192.168.1.100
+       mysql -h 127.0.0.1 -P 3307 -u dbuser -p
+    ```
+    - 3307 → 客户端本地端口，可自定义
+    - 127.0.0.1:3306 → 服务器 MySQL 本地端口
+    - Administrator@192.168.1.100 → 服务器 SSH 登录账号和 IP
