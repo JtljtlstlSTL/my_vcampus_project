@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Implementation-Title: Netty/Transport/Native/Epoll
+Bundle-Description: Netty is an asynchronous event-driven network appl
+ ication framework for    rapid development of maintainable high perfo
+ rmance protocol servers and    clients.
+Automatic-Module-Name: io.netty.transport.epoll.linux.x86_64
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0
+Bundle-SymbolicName: io.netty.transport-native-epoll
+Implementation-Version: 4.1.100.Final
+Built-By: root
+Bnd-LastModified: 1696945872450
+Bundle-ManifestVersion: 2
+Implementation-Vendor-Id: io.netty
+Bundle-DocURL: https://netty.io/
+Bundle-Vendor: The Netty Project
+Import-Package: sun.nio.ch;resolution:=optional,org.eclipse.jetty.npn;
+ version="[1,2)";resolution:=optional,org.eclipse.jetty.alpn;version="
+ [1,2)";resolution:=optional
+Fragment-Host: io.netty.transport-classes-epoll
+Tool: Bnd-6.3.1.202206071316
+Implementation-Vendor: The Netty Project
+Bundle-Name: Netty/Transport/Native/Epoll
+Bundle-Version: 4.1.100.Final
+Bundle-NativeCode: META-INF/native/libnetty_transport_native_epoll_x86
+ _64.so; osname=Linux; processor=x86_64,*
+Build-Jdk-Spec: 1.8
+Created-By: Apache Maven Bundle Plugin 5.1.8
+Build-Jdk: 1.8.0_382
+Implementation-URL: https://netty.io/netty-transport-native-epoll/
+

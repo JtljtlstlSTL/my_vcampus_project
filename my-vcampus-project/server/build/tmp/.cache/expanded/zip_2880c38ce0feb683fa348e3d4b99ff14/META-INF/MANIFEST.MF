@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Bundle-Description: Reflections - Java runtime metadata analysis
+Automatic-Module-Name: org.reflections
+Bundle-License: http://www.wtfpl.net/, http://www.apache.org/licenses/
+ LICENSE-2.0.txt
+Bundle-SymbolicName: org.reflections
+Built-By: ron
+Bnd-LastModified: 1635171682177
+Bundle-ManifestVersion: 2
+Import-Package: org.jboss.vfs;resolution:=optional,com.google.gson;ver
+ sion="[2.8,3)";resolution:=optional,javassist;version="[3.28,4)",java
+ ssist.bytecode;version="[3.28,4)",javassist.bytecode.annotation;versi
+ on="[3.28,4)",javassist.expr;version="[3.28,4)",javax.servlet;resolut
+ ion:=optional,org.dom4j;resolution:=optional,org.dom4j.io;resolution:
+ =optional,org.reflections,org.reflections.scanners,org.reflections.se
+ rializers,org.reflections.util,org.reflections.vfs,org.slf4j;version=
+ "[1.7,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-5.1.1.202006162103
+Export-Package: org.reflections.vfs;uses:="org.jboss.vfs";version="0.1
+ 0.2",org.reflections;uses:="org.reflections.scanners,org.reflections.
+ serializers,org.reflections.util,org.slf4j";version="0.10.2",org.refl
+ ections.util;uses:="javassist.bytecode,javax.servlet,org.reflections,
+ org.reflections.scanners";version="0.10.2",org.reflections.serializer
+ s;uses:="org.reflections";version="0.10.2",org.reflections.scanners;u
+ ses:="javassist.bytecode,org.reflections.util,org.reflections.vfs";ve
+ rsion="0.10.2"
+Bundle-Name: Reflections
+Bundle-Version: 0.10.2
+Build-Jdk-Spec: 1.8
+Created-By: Apache Maven Bundle Plugin
+Build-Jdk: 1.8.0_292
+

@@ -1,0 +1,41 @@
+// VCampus项目配置
+allprojects {
+    group = 'com.vcampus'
+    version = '1.0.0'
+    
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+    
+    dependencies {
+        // 基本日志
+        implementation 'org.slf4j:slf4j-simple:2.0.7'
+        
+        // Lombok - 简化代码注解 (升级到支持JDK 21的版本)
+        compileOnly 'org.projectlombok:lombok:1.18.32'
+        annotationProcessor 'org.projectlombok:lombok:1.18.32'
+        
+        // 测试
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+        testCompileOnly 'org.projectlombok:lombok:1.18.32'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+    }
+    
+    test {
+        useJUnitPlatform()
+    }
+    
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.annotationProcessorPath = configurations.annotationProcessor
+    }
+}

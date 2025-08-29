@@ -1,0 +1,13 @@
+JarIndex-Version: 1.0
+
+netty-resolver-dns-classes-macos-4.1.100.Final.jar
+META-INF
+META-INF/maven
+META-INF/maven/io.netty
+META-INF/maven/io.netty/netty-resolver-dns-classes-macos
+io
+io/netty
+io/netty/resolver
+io/netty/resolver/dns
+io/netty/resolver/dns/macos
+

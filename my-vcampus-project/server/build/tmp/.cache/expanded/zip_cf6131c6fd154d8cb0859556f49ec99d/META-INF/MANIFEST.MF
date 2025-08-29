@@ -1,0 +1,35 @@
+Manifest-Version: 1.0
+Implementation-Title: Netty/Codec/DNS
+Bundle-Description: Netty is an asynchronous event-driven network appl
+ ication framework for    rapid development of maintainable high perfo
+ rmance protocol servers and    clients.
+Automatic-Module-Name: io.netty.codec.dns
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0
+Bundle-SymbolicName: io.netty.codec-dns
+Implementation-Version: 4.1.100.Final
+Built-By: norman
+Bnd-LastModified: 1696948209856
+Bundle-ManifestVersion: 2
+Implementation-Vendor-Id: io.netty
+Bundle-DocURL: https://netty.io/
+Bundle-Vendor: The Netty Project
+Import-Package: io.netty.buffer;version="[4.1,5)",io.netty.channel;ver
+ sion="[4.1,5)",io.netty.channel.socket;version="[4.1,5)",io.netty.han
+ dler.codec;version="[4.1,5)",io.netty.util;version="[4.1,5)",io.netty
+ .util.collection;version="[4.1,5)",io.netty.util.internal;version="[4
+ .1,5)",sun.nio.ch;resolution:=optional,org.eclipse.jetty.npn;version=
+ "[1,2)";resolution:=optional,org.eclipse.jetty.alpn;version="[1,2)";r
+ esolution:=optional
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.6))"
+Tool: Bnd-6.3.1.202206071316
+Implementation-Vendor: The Netty Project
+Export-Package: io.netty.handler.codec.dns;uses:="io.netty.buffer,io.n
+ etty.channel,io.netty.channel.socket,io.netty.handler.codec,io.netty.
+ util";version="4.1.100"
+Bundle-Name: Netty/Codec/DNS
+Bundle-Version: 4.1.100.Final
+Build-Jdk-Spec: 1.8
+Created-By: Apache Maven Bundle Plugin 5.1.8
+Build-Jdk: 1.8.0_382
+Implementation-URL: https://netty.io/netty-codec-dns/
+

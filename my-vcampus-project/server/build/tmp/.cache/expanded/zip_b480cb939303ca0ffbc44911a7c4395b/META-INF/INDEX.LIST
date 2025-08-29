@@ -1,0 +1,12 @@
+JarIndex-Version: 1.0
+
+netty-transport-classes-kqueue-4.1.100.Final.jar
+META-INF
+META-INF/maven
+META-INF/maven/io.netty
+META-INF/maven/io.netty/netty-transport-classes-kqueue
+io
+io/netty
+io/netty/channel
+io/netty/channel/kqueue
+

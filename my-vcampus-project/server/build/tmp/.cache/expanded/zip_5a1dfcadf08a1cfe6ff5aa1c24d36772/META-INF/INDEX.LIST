@@ -1,0 +1,18 @@
+JarIndex-Version: 1.0
+
+netty-codec-redis-4.1.100.Final.jar
+META-INF
+META-INF/maven
+META-INF/maven/io.netty
+META-INF/maven/io.netty/netty-codec-redis
+META-INF/native-image
+META-INF/native-image/io.netty
+META-INF/native-image/io.netty/netty-codec-redis
+META-INF/native-image/io.netty/netty-codec-redis/generated
+META-INF/native-image/io.netty/netty-codec-redis/generated/handlers
+io
+io/netty
+io/netty/handler
+io/netty/handler/codec
+io/netty/handler/codec/redis
+

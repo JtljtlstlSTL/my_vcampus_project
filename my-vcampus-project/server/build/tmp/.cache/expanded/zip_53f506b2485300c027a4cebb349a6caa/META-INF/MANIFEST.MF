@@ -1,0 +1,44 @@
+Manifest-Version: 1.0
+Implementation-Title: Netty/Handler/Ssl/Ocsp
+Bundle-Description: Netty is an asynchronous event-driven network appl
+ ication framework for    rapid development of maintainable high perfo
+ rmance protocol servers and    clients.
+Automatic-Module-Name: io.netty.handler.ssl.ocsp
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0
+Bundle-SymbolicName: io.netty.handler-ssl-ocsp
+Implementation-Version: 4.1.100.Final
+Built-By: root
+Bnd-LastModified: 1696945823802
+Bundle-ManifestVersion: 2
+Implementation-Vendor-Id: io.netty
+Bundle-DocURL: https://netty.io/
+Bundle-Vendor: The Netty Project
+Import-Package: io.netty.bootstrap;version="[4.1,5)",io.netty.buffer;v
+ ersion="[4.1,5)",io.netty.channel;version="[4.1,5)",io.netty.channel.
+ nio;version="[4.1,5)",io.netty.channel.socket;version="[4.1,5)",io.ne
+ tty.channel.socket.nio;version="[4.1,5)",io.netty.handler.codec.http;
+ version="[4.1,5)",io.netty.handler.ssl;version="[4.1,5)",io.netty.res
+ olver.dns;version="[4.1,5)",io.netty.util;version="[4.1,5)",io.netty.
+ util.concurrent;version="[4.1,5)",io.netty.util.internal;version="[4.
+ 1,5)",io.netty.util.internal.logging;version="[4.1,5)",javax.net.ssl,
+ org.bouncycastle.asn1;version="[1.69,2)";resolution:=optional,org.bou
+ ncycastle.asn1.ocsp;version="[1.69,2)";resolution:=optional,org.bounc
+ ycastle.asn1.x509;version="[1.69,2)";resolution:=optional,org.bouncyc
+ astle.cert;version="[1.69,2)",org.bouncycastle.cert.jcajce;version="[
+ 1.69,2)",org.bouncycastle.cert.ocsp;version="[1.69,2)",org.bouncycast
+ le.operator;version="[1.69,2)",org.bouncycastle.operator.jcajce;versi
+ on="[1.69,2)",sun.nio.ch;resolution:=optional,org.eclipse.jetty.npn;v
+ ersion="[1,2)";resolution:=optional,org.eclipse.jetty.alpn;version="[
+ 1,2)";resolution:=optional
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.6))"
+Tool: Bnd-6.3.1.202206071316
+Implementation-Vendor: The Netty Project
+Export-Package: io.netty.handler.ssl.ocsp;version="4.1.100";uses:="io.
+ netty.channel,io.netty.channel.socket,io.netty.resolver.dns"
+Bundle-Name: Netty/Handler/Ssl/Ocsp
+Bundle-Version: 4.1.100.Final
+Build-Jdk-Spec: 1.8
+Created-By: Apache Maven Bundle Plugin 5.1.8
+Build-Jdk: 1.8.0_382
+Implementation-URL: https://netty.io/netty-handler-ssl-ocsp/
+

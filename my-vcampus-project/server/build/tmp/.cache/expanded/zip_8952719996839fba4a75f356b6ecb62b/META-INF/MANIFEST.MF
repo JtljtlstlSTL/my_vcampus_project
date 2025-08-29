@@ -1,0 +1,42 @@
+Manifest-Version: 1.0
+Implementation-Title: Netty/Codec/Socks
+Bundle-Description: Netty is an asynchronous event-driven network appl
+ ication framework for    rapid development of maintainable high perfo
+ rmance protocol servers and    clients.
+Automatic-Module-Name: io.netty.codec.socks
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0
+Bundle-SymbolicName: io.netty.codec-socks
+Implementation-Version: 4.1.100.Final
+Built-By: root
+Bnd-LastModified: 1696945795005
+Bundle-ManifestVersion: 2
+Implementation-Vendor-Id: io.netty
+Bundle-DocURL: https://netty.io/
+Bundle-Vendor: The Netty Project
+Import-Package: io.netty.buffer;version="[4.1,5)",io.netty.channel;ver
+ sion="[4.1,5)",io.netty.handler.codec;version="[4.1,5)",io.netty.hand
+ ler.codec.socksx,io.netty.handler.codec.socksx.v4,io.netty.handler.co
+ dec.socksx.v5,io.netty.util;version="[4.1,5)",io.netty.util.internal;
+ version="[4.1,5)",io.netty.util.internal.logging;version="[4.1,5)",su
+ n.nio.ch;resolution:=optional,org.eclipse.jetty.npn;version="[1,2)";r
+ esolution:=optional,org.eclipse.jetty.alpn;version="[1,2)";resolution
+ :=optional
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.6))"
+Tool: Bnd-6.3.1.202206071316
+Implementation-Vendor: The Netty Project
+Export-Package: io.netty.handler.codec.socks;uses:="io.netty.buffer,io
+ .netty.channel,io.netty.handler.codec";version="4.1.100",io.netty.han
+ dler.codec.socksx;uses:="io.netty.buffer,io.netty.channel,io.netty.ha
+ ndler.codec,io.netty.handler.codec.socksx.v5";version="4.1.100",io.ne
+ tty.handler.codec.socksx.v4;uses:="io.netty.buffer,io.netty.channel,i
+ o.netty.handler.codec,io.netty.handler.codec.socksx";version="4.1.100
+ ",io.netty.handler.codec.socksx.v5;uses:="io.netty.buffer,io.netty.ch
+ annel,io.netty.handler.codec,io.netty.handler.codec.socksx";version="
+ 4.1.100"
+Bundle-Name: Netty/Codec/Socks
+Bundle-Version: 4.1.100.Final
+Build-Jdk-Spec: 1.8
+Created-By: Apache Maven Bundle Plugin 5.1.8
+Build-Jdk: 1.8.0_382
+Implementation-URL: https://netty.io/netty-codec-socks/
+

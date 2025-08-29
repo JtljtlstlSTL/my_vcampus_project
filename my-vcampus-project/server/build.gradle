@@ -1,0 +1,39 @@
+// Server模块配置
+description = 'VCampus服务端模块 - 包含业务逻辑、数据处理等'
+
+dependencies {
+    // 依赖Common模块
+    implementation project(':common')
+    
+    // 网络通信
+    implementation 'io.netty:netty-all:4.1.100.Final'
+    
+    // 反射工具
+    implementation 'org.reflections:reflections:0.10.2'
+}
+
+// 应用插件
+apply plugin: 'application'
+
+// 主类配置
+application {
+    mainClass = 'com.vcampus.server.ServerApplication'
+}
+
+// 打包配置
+jar {
+    archiveBaseName = 'vcampus-server'
+    manifest {
+        attributes(
+            'Implementation-Title': 'VCampus Server',
+            'Implementation-Version': project.version,
+            'Main-Class': 'com.vcampus.server.ServerApplication'
+        )
+    }
+    
+    // 包含所有依赖
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

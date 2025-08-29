@@ -1,0 +1,15 @@
+// VCampus项目配置
+rootProject.name = 'my-vcampus-project'
+
+// 包含的模块
+include 'common'
+include 'server'
+include 'client'
+
+// 项目描述
+gradle.projectsLoaded {
+    println " VCampus Project Loaded Successfully:"
+    println "   common - Common tools and message classes"
+    println "   server - Server business logic"
+    println "   client - Client user interface"
+}

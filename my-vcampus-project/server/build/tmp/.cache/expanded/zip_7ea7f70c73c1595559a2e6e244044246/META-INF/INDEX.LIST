@@ -1,0 +1,17 @@
+JarIndex-Version: 1.0
+
+netty-resolver-dns-4.1.100.Final.jar
+META-INF
+META-INF/maven
+META-INF/maven/io.netty
+META-INF/maven/io.netty/netty-resolver-dns
+META-INF/native-image
+META-INF/native-image/io.netty
+META-INF/native-image/io.netty/netty-resolver-dns
+META-INF/native-image/io.netty/netty-resolver-dns/generated
+META-INF/native-image/io.netty/netty-resolver-dns/generated/handlers
+io
+io/netty
+io/netty/resolver
+io/netty/resolver/dns
+

@@ -1,0 +1,26 @@
+JarIndex-Version: 1.0
+
+netty-codec-4.1.100.Final.jar
+META-INF
+META-INF/maven
+META-INF/maven/io.netty
+META-INF/maven/io.netty/netty-codec
+META-INF/native-image
+META-INF/native-image/io.netty
+META-INF/native-image/io.netty/netty-codec
+META-INF/native-image/io.netty/netty-codec/generated
+META-INF/native-image/io.netty/netty-codec/generated/handlers
+io
+io/netty
+io/netty/handler
+io/netty/handler/codec
+io/netty/handler/codec/base64
+io/netty/handler/codec/bytes
+io/netty/handler/codec/compression
+io/netty/handler/codec/json
+io/netty/handler/codec/marshalling
+io/netty/handler/codec/protobuf
+io/netty/handler/codec/serialization
+io/netty/handler/codec/string
+io/netty/handler/codec/xml
+
