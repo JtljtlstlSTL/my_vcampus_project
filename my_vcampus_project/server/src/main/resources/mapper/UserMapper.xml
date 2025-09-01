@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.dao.UserMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="UserResultMap" type="User">
+        <id column="cardNum" property="cardNum"/>
+        <result column="cardNumPassword" property="password"/>
+        <result column="Name" property="name"/>
+        <result column="Age" property="age"/>
+        <result column="Gender" property="gender"/>
+        <result column="Phone" property="phone"/>
+        <result column="userType" property="userType"/>
+    </resultMap>
+    
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        cardNum, cardNumPassword, Name, Age, Gender, userType, Phone
+    </sql>
+    
+    <!-- 根据卡号查询用户 -->
+    <select id="findById" parameterType="int" resultMap="UserResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblUser
+        WHERE cardNum = #{cardNum}
+    </select>
+    
+    <!-- 查询所有用户 -->
+    <select id="findAll" resultMap="UserResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblUser
+        ORDER BY cardNum
+    </select>
+    
+    <!-- 根据用户类型查询 -->
+    <select id="findByUserType" parameterType="string" resultMap="UserResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblUser
+        WHERE userType = #{userType}
+        ORDER BY cardNum
+    </select>
+    
+    <!-- 根据手机号查询 -->
+    <select id="findByPhone" parameterType="string" resultMap="UserResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblUser
+        WHERE Phone = #{phone}
+    </select>
+    
+    <!-- 根据姓名模糊查询 -->
+    <select id="findByNameLike" parameterType="string" resultMap="UserResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblUser
+        WHERE Name LIKE CONCAT('%', #{name}, '%')
+        ORDER BY cardNum
+    </select>
+    
+    <!-- 插入用户 -->
+    <insert id="insert" parameterType="User" useGeneratedKeys="false">
+        INSERT INTO tblUser (cardNum, cardNumPassword, Name, Age, Gender, userType, Phone)
+        VALUES (#{cardNum}, #{password}, #{name}, #{age}, #{gender}, #{userType}, #{phone})
+    </insert>
+    
+    <!-- 更新用户 -->
+    <update id="update" parameterType="User">
+        UPDATE tblUser
+        SET cardNumPassword = #{password},
+            Name = #{name},
+            Age = #{age},
+            Gender = #{gender},
+            userType = #{userType},
+            Phone = #{phone}
+        WHERE cardNum = #{cardNum}
+    </update>
+    
+    <!-- 删除用户 -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM tblUser WHERE cardNum = #{cardNum}
+    </delete>
+    
+    <!-- 检查用户是否存在 -->
+    <select id="existsById" parameterType="int" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblUser WHERE cardNum = #{cardNum}
+    </select>
+    
+    <!-- 统计用户数量 -->
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM tblUser
+    </select>
+    
+</mapper>
