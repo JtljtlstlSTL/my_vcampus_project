@@ -20,7 +20,6 @@ public class LoginFrame extends JFrame {
     private JButton btnLogin, btnTogglePwd, btnClose, btnMinimize;
     private JLabel lblUsernameError, lblPasswordError;
     private boolean isPasswordVisible = false;
-    private MainFrame mainFrame;
     private NettyClient nettyClient;
     private String currentUserCardNum;
     private String currentUserType, currentUserName;
@@ -480,9 +479,6 @@ public class LoginFrame extends JFrame {
             } else {
                 // 默认打开原来的主界面
                 log.warn("⚠️ 未知的用户类型: '{}'，打开默认主界面", userType);
-                mainFrame = new MainFrame(currentUserCardNum, currentUserType, currentUserName);
-                mainFrame.setVisible(true);
-                log.info("✅ 主界面打开成功，用户: {} ({})", currentUserName, currentUserType);
             }
 
             // 隐藏登录窗口
@@ -532,20 +528,6 @@ public class LoginFrame extends JFrame {
         this.currentUserName = userName;
     }
 
-    private void openMainFrame() {
-        try {
-            mainFrame = new MainFrame(currentUserCardNum, currentUserType, currentUserName);
-            mainFrame.setVisible(true);
-            this.setVisible(false);
-            log.info("✅ 主界面打开成功，用户: {} ({})", currentUserName, currentUserType);
-        } catch (Exception e) {
-            log.error("💥 主界面打开失败", e);
-            JOptionPane.showMessageDialog(this,
-                    "主界面打开失败: " + e.getMessage(),
-                    "错误",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void addMouseListeners() {
         // 可选：窗口拖动功能

@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/my_vcampus_project.iml" filepath="$PROJECT_DIR$/.idea/my_vcampus_project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/my-vcampus-project.client.main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/my-vcampus-project.client.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/my-vcampus-project.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/my-vcampus-project.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/my-vcampus-project.server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/server/my-vcampus-project.server.main.iml" />
     </modules>
   </component>
 </project>

@@ -25,6 +25,7 @@ public class AdminFrame extends JFrame {
     private JLabel lblAdminId;
     private JButton btnLogout;
     private JButton btnChangePassword;
+    private JButton btnFunctionSelect; // 新增功能选择按钮
 
     private NettyClient nettyClient;
     private Map<String, Object> userData;
@@ -106,7 +107,7 @@ public class AdminFrame extends JFrame {
             // 其他类型，转换为字符串
             cardNumText = cardNumObj.toString();
         }
-        
+
         lblAdminId = new JLabel("(" + cardNumText + ")");
         lblAdminId.setFont(new Font("微软雅黑", Font.PLAIN, 14));
         lblAdminId.setForeground(Color.GRAY);
@@ -115,21 +116,29 @@ public class AdminFrame extends JFrame {
         userInfoPanel.add(lblAdminName);
         userInfoPanel.add(lblAdminId);
 
-        // 右侧显示修改密码和退出登录按钮
+        // 右侧显示功能选择、修改密码和退出登录按钮
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttonPanel.setOpaque(false);
 
+        btnFunctionSelect = new JButton("功能选择");
         btnChangePassword = new JButton("修改密码");
         btnLogout = new JButton("退出登录");
 
         // 设置按钮大小一致
         Dimension buttonSize = new Dimension(100, 30);
+        btnFunctionSelect.setPreferredSize(buttonSize);
         btnChangePassword.setPreferredSize(buttonSize);
         btnLogout.setPreferredSize(buttonSize);
 
+        btnFunctionSelect.setFocusPainted(false);
         btnChangePassword.setFocusPainted(false);
         btnLogout.setFocusPainted(false);
 
+        // 设置功能选择按钮的样式
+        btnFunctionSelect.setBackground(new Color(25, 133, 57));
+        btnFunctionSelect.setForeground(Color.WHITE);
+
+        buttonPanel.add(btnFunctionSelect);
         buttonPanel.add(btnChangePassword);
         buttonPanel.add(btnLogout);
 
@@ -314,6 +323,7 @@ public class AdminFrame extends JFrame {
     private void setupEventHandlers() {
         btnLogout.addActionListener(e -> handleLogout());
         btnChangePassword.addActionListener(e -> handleChangePassword());
+        btnFunctionSelect.addActionListener(e -> handleFunctionSelect()); // 新增功能选择按钮事件
 
         // 窗口关闭时的确认
         addWindowListener(new WindowAdapter() {
@@ -502,13 +512,13 @@ public class AdminFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
 
         JTextArea passwordRequirements = new JTextArea(
-            "密码要求：\n" +
-            "• 长度至少8个字符\n" +
-            "• 必须包含以下至少两种类型的字符：\n" +
-            "  - 数字 (0-9)\n" +
-            "  - 大写字母 (A-Z)\n" +
-            "  - 小写字母 (a-z)\n" +
-            "  - 特殊符号 (!@#$%^&*等)"
+                "密码要求：\n" +
+                        "• 长度至少8个字符\n" +
+                        "• 必须包含以下至少两种类型的字符：\n" +
+                        "  - 数字 (0-9)\n" +
+                        "  - 大写字母 (A-Z)\n" +
+                        "  - 小写字母 (a-z)\n" +
+                        "  - 特殊符号 (!@#$%^&*等)"
         );
         passwordRequirements.setEditable(false);
         passwordRequirements.setOpaque(false);
@@ -762,10 +772,10 @@ public class AdminFrame extends JFrame {
             log.info("发送密码修改请求，用户卡号: {}", cardNumStr);
 
             Request request = new Request("auth/changepassword")
-                .addParam("cardNum", cardNumStr)
-                .addParam("oldPassword", oldPassword)
-                .addParam("newPassword", newPassword)
-                .addParam("userType", "admin"); // 添加用户类型参数
+                    .addParam("cardNum", cardNumStr)
+                    .addParam("oldPassword", oldPassword)
+                    .addParam("newPassword", newPassword)
+                    .addParam("userType", "admin"); // 添加用户类型参数
 
             // 发送请求，增加超时时间
             Response response = nettyClient.sendRequest(request).get(10, java.util.concurrent.TimeUnit.SECONDS);
@@ -817,6 +827,27 @@ public class AdminFrame extends JFrame {
                 return "管理员";
             default:
                 return englishRole; // 如果没有匹配的，返回原文
+        }
+    }
+
+    /**
+     * 处理功能选择按钮点击事件
+     */
+    private void handleFunctionSelect() {
+        try {
+            log.info("管理员 {} 点击功能选择按钮", userData.get("userName"));
+
+            // 创建并显示SelectFrame界面
+            SelectFrame selectFrame = new SelectFrame(nettyClient, userData, this);
+            selectFrame.setVisible(true);
+
+            log.info("功能选择界面已打开");
+        } catch (Exception e) {
+            log.error("打开功能选择界面时发生错误", e);
+            JOptionPane.showMessageDialog(this,
+                    "无法打开功能选择界面：" + e.getMessage(),
+                    "错误",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
