@@ -15,6 +15,10 @@ dependencies {
     // 图标
     implementation 'org.kordamp.ikonli:ikonli-swing:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1'
+    // 矢量图
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.14'
+    implementation 'org.apache.xmlgraphics:batik-codec:1.14'
+
 }
 
 // 应用插件

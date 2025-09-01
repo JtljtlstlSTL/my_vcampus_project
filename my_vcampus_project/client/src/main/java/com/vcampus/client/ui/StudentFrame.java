@@ -3,6 +3,7 @@ package com.vcampus.client.ui;
 import com.vcampus.client.net.NettyClient;
 import com.vcampus.common.message.Request;
 import com.vcampus.common.message.Response;
+import com.vcampus.client.ui.component.SvgButton;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -142,38 +143,97 @@ public class StudentFrame extends JFrame {
         return pane;
     }
 
+//    private JPanel createProfilePanel() {
+//        JPanel panel = new JPanel(new BorderLayout());
+//        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+//
+//        JLabel titleLabel = new JLabel("个人信息");
+//        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 18));
+//        panel.add(titleLabel, BorderLayout.NORTH);
+//
+//        // 这里可以添加更多个人信息组件
+//        JPanel infoPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+//        infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+//
+//        infoPanel.add(new JLabel("学号:"));
+//        infoPanel.add(new JLabel(userData.get("cardNum").toString()));
+//
+//        infoPanel.add(new JLabel("姓名:"));
+//        infoPanel.add(new JLabel(userData.get("userName").toString()));
+//
+//        infoPanel.add(new JLabel("性别:"));
+//        infoPanel.add(new JLabel(userData.get("gender").toString()));
+//
+//        infoPanel.add(new JLabel("电话:"));
+//        infoPanel.add(new JLabel(userData.get("phone") != null ? userData.get("phone").toString() : "未设置"));
+//
+//        infoPanel.add(new JLabel("角色:"));
+//        infoPanel.add(new JLabel(translateRole(userData.get("primaryRole").toString())));
+//
+//        panel.add(infoPanel, BorderLayout.CENTER);
+//
+//        return panel;
+//    }
+
+    //
+
+
     private JPanel createProfilePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 200, 30, 200)); // 增加左右留白
 
-        JLabel titleLabel = new JLabel("个人信息");
-        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 18));
+        JLabel titleLabel = new JLabel("个人信息", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 22));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        // 这里可以添加更多个人信息组件
-        JPanel infoPanel = new JPanel(new GridLayout(5, 2, 10, 10));
-        infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        // 信息面板采用垂直 BoxLayout
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220), 1, true),
+                BorderFactory.createEmptyBorder(30, 40, 30, 40)
+        ));
+        infoPanel.setBackground(Color.WHITE);
 
-        infoPanel.add(new JLabel("学号:"));
-        infoPanel.add(new JLabel(userData.get("cardNum").toString()));
-
-        infoPanel.add(new JLabel("姓名:"));
-        infoPanel.add(new JLabel(userData.get("userName").toString()));
-
-        infoPanel.add(new JLabel("性别:"));
-        infoPanel.add(new JLabel(userData.get("gender").toString()));
-
-        infoPanel.add(new JLabel("电话:"));
-        infoPanel.add(new JLabel(userData.get("phone") != null ? userData.get("phone").toString() : "未设置"));
-
-        infoPanel.add(new JLabel("角色:"));
-        infoPanel.add(new JLabel(translateRole(userData.get("primaryRole").toString())));
+        // 每行信息采用统一格式
+        infoPanel.add(createInfoRow("学号：", userData.get("cardNum").toString()));
+        infoPanel.add(Box.createVerticalStrut(18));
+        infoPanel.add(createInfoRow("姓名：", userData.get("userName").toString()));
+        infoPanel.add(Box.createVerticalStrut(18));
+        infoPanel.add(createInfoRow("性别：", userData.get("gender").toString()));
+        infoPanel.add(Box.createVerticalStrut(18));
+        infoPanel.add(createInfoRow("电话：", userData.get("phone") != null ? userData.get("phone").toString() : "未设置"));
+        infoPanel.add(Box.createVerticalStrut(18));
+        infoPanel.add(createInfoRow("角色：", translateRole(userData.get("primaryRole").toString())));
 
         panel.add(infoPanel, BorderLayout.CENTER);
 
         return panel;
     }
 
+    // 辅助方法：创建一行信息
+    private JPanel createInfoRow(String label, String value) {
+        JPanel row = new JPanel(new BorderLayout());
+        row.setOpaque(false);
+
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(new Font("微软雅黑", Font.BOLD, 16));
+        lbl.setPreferredSize(new Dimension(80, 30));
+
+        JLabel val = new JLabel(value);
+        val.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        val.setForeground(new Color(60, 60, 60));
+
+        row.add(lbl, BorderLayout.WEST);
+        row.add(val, BorderLayout.CENTER);
+
+        return row;
+    }
+
+
+
+
+    //
     private JPanel createCoursePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -282,7 +342,7 @@ public class StudentFrame extends JFrame {
             new LoginFrame().setVisible(true);
         }
     }
-
+    
     /**
      * 处理修改密码
      */
@@ -297,7 +357,7 @@ public class StudentFrame extends JFrame {
         // 创建主面板
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
+        
         // 创建表单面板
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -364,13 +424,13 @@ public class StudentFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
 
         JTextArea passwordRequirements = new JTextArea(
-                "密码要求：\n" +
-                        "• 长度至少8个字符\n" +
-                        "• 必须包含以下至少两种类型的字符：\n" +
-                        "  - 数字 (0-9)\n" +
-                        "  - 大写字母 (A-Z)\n" +
-                        "  - 小写字母 (a-z)\n" +
-                        "  - 特殊符号 (!@#$%^&*等)"
+            "密码要求：\n" +
+            "• 长度至少8个字符\n" +
+            "• 必须包含以下至少两种类型的字符：\n" +
+            "  - 数字 (0-9)\n" +
+            "  - 大写字母 (A-Z)\n" +
+            "  - 小写字母 (a-z)\n" +
+            "  - 特殊符号 (!@#$%^&*等)"
         );
         passwordRequirements.setEditable(false);
         passwordRequirements.setOpaque(false);
@@ -380,21 +440,21 @@ public class StudentFrame extends JFrame {
         formPanel.add(passwordRequirements, gbc);
 
         mainPanel.add(formPanel, BorderLayout.CENTER);
-
+        
         // 创建按钮面板
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         JButton btnConfirm = new JButton("确认修改");
         JButton btnCancel = new JButton("取消");
-
+        
         btnConfirm.setPreferredSize(new Dimension(100, 30));
         btnCancel.setPreferredSize(new Dimension(100, 30));
 
         buttonPanel.add(btnConfirm);
         buttonPanel.add(btnCancel);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
+        
         dialog.add(mainPanel);
-
+        
         // 添加密码强度检测
         txtNewPassword.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
@@ -448,86 +508,53 @@ public class StudentFrame extends JFrame {
             String oldPassword = new String(txtOldPassword.getPassword());
             String newPassword = new String(txtNewPassword.getPassword());
             String confirmPassword = new String(txtConfirmPassword.getPassword());
-
+            
             // 验证输入
             if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "请填写所有密码字段！", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            
             if (!newPassword.equals(confirmPassword)) {
                 JOptionPane.showMessageDialog(dialog, "新密码与确认密码不一致！", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            
             if (!isPasswordValid(newPassword)) {
                 JOptionPane.showMessageDialog(dialog, "新密码不符合强度要求！\n请确保密码长度至少8位，且包含至少两种不同类型的字符。", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            
             // 发送修改密码请求
             changePassword(oldPassword, newPassword, dialog);
         });
-
+        
         btnCancel.addActionListener(e -> dialog.dispose());
-
+        
         // 显示对话框
         dialog.setVisible(true);
     }
-
+    
     /**
      * 创建密码显示/隐藏切换按钮
      */
     private JButton createPasswordToggleButton(JPasswordField passwordField) {
-        JButton toggleButton = new JButton();
+        SvgButton toggleButton = new SvgButton("/figures/eye_close.svg");
         toggleButton.setPreferredSize(new Dimension(30, 30));
         toggleButton.setBorderPainted(false);
         toggleButton.setContentAreaFilled(false);
         toggleButton.setFocusPainted(false);
 
-        // 尝试加载图标
-        ImageIcon eyeOpenIcon = null;
-        ImageIcon eyeCloseIcon = null;
-
-        try {
-            eyeOpenIcon = new ImageIcon(getClass().getResource("/figures/eye_open.png"));
-            eyeCloseIcon = new ImageIcon(getClass().getResource("/figures/eye_close.png"));
-
-            // 缩放图标到合适大小
-            eyeOpenIcon = new ImageIcon(eyeOpenIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-            eyeCloseIcon = new ImageIcon(eyeCloseIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-        } catch (Exception e) {
-            log.warn("密码显示图标加载失败，使用文本按钮");
-        }
-
-        // 设置初始状态（密码隐藏）
-        final ImageIcon finalEyeOpenIcon = eyeOpenIcon;
-        final ImageIcon finalEyeCloseIcon = eyeCloseIcon;
-
-        if (finalEyeCloseIcon != null) {
-            toggleButton.setIcon(finalEyeCloseIcon);
-        } else {
-            toggleButton.setText("显示");
-            toggleButton.setFont(new Font("微软雅黑", Font.PLAIN, 10));
-        }
+        // 初始状态（密码隐藏）
+        passwordField.setEchoChar('•');
 
         toggleButton.addActionListener(e -> {
             if (passwordField.getEchoChar() == 0) {
-                // 当前显示密码，切换为隐藏
                 passwordField.setEchoChar('•');
-                if (finalEyeCloseIcon != null) {
-                    toggleButton.setIcon(finalEyeCloseIcon);
-                } else {
-                    toggleButton.setText("显示");
-                }
+                toggleButton.setSvgIcon("/figures/eye_close.svg");
             } else {
-                // 当前隐藏密码，切换为显示
                 passwordField.setEchoChar((char) 0);
-                if (finalEyeOpenIcon != null) {
-                    toggleButton.setIcon(finalEyeOpenIcon);
-                } else {
-                    toggleButton.setText("隐藏");
-                }
+                toggleButton.setSvgIcon("/figures/eye_open.svg");
             }
         });
 
@@ -541,12 +568,12 @@ public class StudentFrame extends JFrame {
         if (password.length() < 8) {
             return 0;
         }
-
+        
         boolean hasDigit = false;
         boolean hasUpperCase = false;
         boolean hasLowerCase = false;
         boolean hasSpecialChar = false;
-
+        
         for (char c : password.toCharArray()) {
             if (Character.isDigit(c)) {
                 hasDigit = true;
@@ -558,17 +585,17 @@ public class StudentFrame extends JFrame {
                 hasSpecialChar = true;
             }
         }
-
+        
         // 计算满足的条件数量
         int conditionsMet = 0;
         if (hasDigit) conditionsMet++;
         if (hasUpperCase) conditionsMet++;
         if (hasLowerCase) conditionsMet++;
         if (hasSpecialChar) conditionsMet++;
-
+        
         return conditionsMet;
     }
-
+    
     /**
      * 验证密码强度
      */
@@ -624,10 +651,10 @@ public class StudentFrame extends JFrame {
             log.info("发送密码修改请求，用户卡号: {}", cardNumStr);
 
             Request request = new Request("auth/changepassword")
-                    .addParam("cardNum", cardNumStr)
-                    .addParam("oldPassword", oldPassword)
-                    .addParam("newPassword", newPassword)
-                    .addParam("userType", "student"); // 添加用户类型参数
+                .addParam("cardNum", cardNumStr)
+                .addParam("oldPassword", oldPassword)
+                .addParam("newPassword", newPassword)
+                .addParam("userType", "student"); // 添加用户类型参数
 
             // 发送请求，增加超时时间
             Response response = nettyClient.sendRequest(request).get(10, java.util.concurrent.TimeUnit.SECONDS);
@@ -645,7 +672,7 @@ public class StudentFrame extends JFrame {
                 });
                 log.warn("用户 {} 密码修改失败: {}", userData.get("userName"), errorMsg);
             }
-
+            
         } catch (java.util.concurrent.TimeoutException e) {
             log.error("密码修改请求超时", e);
             SwingUtilities.invokeLater(() -> {
@@ -680,5 +707,24 @@ public class StudentFrame extends JFrame {
             default:
                 return englishRole; // 如果没有匹配的，返回原文
         }
+    }
+
+    //
+    public static void main(String[] args) {
+        // 模拟用户数据
+        java.util.Map<String, Object> userData = new java.util.HashMap<>();
+        userData.put("cardNum", "10001");
+        userData.put("userName", "测试学生");
+        userData.put("gender", "男");
+        userData.put("phone", "13800000000");
+        userData.put("primaryRole", "student");
+
+        // 创建一个假的 NettyClient（可根据实际情况替换为真实实现）
+        NettyClient nettyClient = new NettyClient("localhost", 8080);
+
+        // 启动界面
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            new StudentFrame(nettyClient, userData).setVisible(true);
+        });
     }
 }

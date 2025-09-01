@@ -11,6 +11,7 @@ import java.util.Map;
 import com.vcampus.client.net.NettyClient;
 import com.vcampus.common.message.Request;
 import com.vcampus.common.message.Response;
+import com.vcampus.client.ui.component.SvgButton;
 
 @Slf4j
 public class LoginFrame extends JFrame {
@@ -70,7 +71,7 @@ public class LoginFrame extends JFrame {
         panel.setBackground(Color.WHITE);
         JLabel imageLabel = new JLabel();
         try {
-            imageLabel.setIcon(new ImageIcon(getClass().getResource("/figures/1.jpg")));
+            imageLabel.setIcon(new ImageIcon(getClass().getResource("/figures/login_backgroud.jpg")));
         } catch (Exception e) {
             imageLabel.setText("VCampus");
             imageLabel.setFont(new Font("微软雅黑", Font.BOLD, 48));
@@ -223,17 +224,9 @@ public class LoginFrame extends JFrame {
         return rightPanel;
     }
 
+    // Java
     private void createTopRightButtons(JLayeredPane layeredPane) {
-        try {
-            btnClose = new JButton(new ImageIcon(getClass().getResource("/figures/close1.png")));
-        } catch (Exception e) {
-            btnClose = new JButton("✕");
-            btnClose.setFont(new Font("Arial", Font.BOLD, 16));
-            btnClose.setForeground(Color.WHITE);
-        }
-        btnClose.setBorderPainted(false);
-        btnClose.setFocusPainted(false);
-        btnClose.setContentAreaFilled(false);
+        btnClose = new SvgButton("/figures/close.svg");
         btnClose.setBounds(690, 0, 20, 20);
         btnClose.addActionListener(e -> animateClose());
         btnClose.addMouseListener(new MouseAdapter() {
@@ -246,16 +239,7 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        try {
-            btnMinimize = new JButton(new ImageIcon(getClass().getResource("/figures/minimize.png")));
-        } catch (Exception e) {
-            btnMinimize = new JButton("−");
-            btnMinimize.setFont(new Font("Arial", Font.BOLD, 16));
-            btnMinimize.setForeground(Color.WHITE);
-        }
-        btnMinimize.setBorderPainted(false);
-        btnMinimize.setFocusPainted(false);
-        btnMinimize.setContentAreaFilled(false);
+        btnMinimize = new SvgButton("/figures/minimize.svg");
         btnMinimize.setBounds(665, 0, 20, 20);
         btnMinimize.addActionListener(e -> animateMinimize());
         btnMinimize.addMouseListener(new MouseAdapter() {
@@ -273,12 +257,7 @@ public class LoginFrame extends JFrame {
     }
 
     private void createPasswordToggleButton(JLayeredPane layeredPane) {
-        try {
-            btnTogglePwd = new JButton(new ImageIcon(getClass().getResource("/figures/eye_close.png")));
-        } catch (Exception e) {
-            btnTogglePwd = new JButton("👁");
-            btnTogglePwd.setFont(new Font("Arial", Font.PLAIN, 14));
-        }
+        btnTogglePwd = new SvgButton("/figures/eye_close.svg");
         btnTogglePwd.setBorderPainted(false);
         btnTogglePwd.setFocusPainted(false);
         btnTogglePwd.setContentAreaFilled(false);
@@ -287,21 +266,11 @@ public class LoginFrame extends JFrame {
         btnTogglePwd.addActionListener(e -> {
             if (isPasswordVisible) {
                 txtPassword.setEchoChar('*');
-                try {
-                    ImageIcon eyeCloseIcon = new ImageIcon(getClass().getResource("/figures/eye_close.png"));
-                    btnTogglePwd.setIcon(eyeCloseIcon);
-                } catch (Exception ex) {
-                    btnTogglePwd.setText("👁");
-                }
+                ((SvgButton) btnTogglePwd).setSvgIcon("/figures/eye_close.svg");
                 isPasswordVisible = false;
             } else {
                 txtPassword.setEchoChar((char) 0);
-                try {
-                    ImageIcon eyeOpenIcon = new ImageIcon(getClass().getResource("/figures/eye_open.png"));
-                    btnTogglePwd.setIcon(eyeOpenIcon);
-                } catch (Exception ex) {
-                    btnTogglePwd.setText("🙈");
-                }
+                ((SvgButton) btnTogglePwd).setSvgIcon("/figures/eye_open.svg");
                 isPasswordVisible = true;
             }
         });
