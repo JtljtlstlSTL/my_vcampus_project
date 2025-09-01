@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Map;
-import com.vcampus.client.ui.component.SvgButton;
 
 /**
  * 管理员用户主界面
@@ -618,22 +617,55 @@ public class AdminFrame extends JFrame {
      * 创建密码显示/隐藏切换按钮
      */
     private JButton createPasswordToggleButton(JPasswordField passwordField) {
-        SvgButton toggleButton = new SvgButton("/figures/eye_close.svg");
+        JButton toggleButton = new JButton();
         toggleButton.setPreferredSize(new Dimension(30, 30));
         toggleButton.setBorderPainted(false);
         toggleButton.setContentAreaFilled(false);
         toggleButton.setFocusPainted(false);
 
-        // 初始状态（密码隐藏）
-        passwordField.setEchoChar('•');
+        // 尝试加载图标
+        ImageIcon eyeOpenIcon = null;
+        ImageIcon eyeCloseIcon = null;
+
+        try {
+            eyeOpenIcon = new ImageIcon(getClass().getResource("/figures/eye_open.png"));
+            eyeCloseIcon = new ImageIcon(getClass().getResource("/figures/eye_close.png"));
+
+            // 缩放图标到合适大小
+            eyeOpenIcon = new ImageIcon(eyeOpenIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+            eyeCloseIcon = new ImageIcon(eyeCloseIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        } catch (Exception e) {
+            log.warn("密码显示图标加载失败，使用文本按钮");
+        }
+
+        // 设置初始状态（密码隐藏）
+        final ImageIcon finalEyeOpenIcon = eyeOpenIcon;
+        final ImageIcon finalEyeCloseIcon = eyeCloseIcon;
+
+        if (finalEyeCloseIcon != null) {
+            toggleButton.setIcon(finalEyeCloseIcon);
+        } else {
+            toggleButton.setText("显示");
+            toggleButton.setFont(new Font("微软雅黑", Font.PLAIN, 10));
+        }
 
         toggleButton.addActionListener(e -> {
             if (passwordField.getEchoChar() == 0) {
+                // 当前显示密码，切换为隐藏
                 passwordField.setEchoChar('•');
-                toggleButton.setSvgIcon("/figures/eye_close.svg");
+                if (finalEyeCloseIcon != null) {
+                    toggleButton.setIcon(finalEyeCloseIcon);
+                } else {
+                    toggleButton.setText("显示");
+                }
             } else {
+                // 当前隐藏密码，切换为显示
                 passwordField.setEchoChar((char) 0);
-                toggleButton.setSvgIcon("/figures/eye_open.svg");
+                if (finalEyeOpenIcon != null) {
+                    toggleButton.setIcon(finalEyeOpenIcon);
+                } else {
+                    toggleButton.setText("隐藏");
+                }
             }
         });
 

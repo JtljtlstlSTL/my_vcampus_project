@@ -68,7 +68,8 @@ public class User {
     /**
      * Check if user is admin
      */
-    public boolean isAdmin() { return hasRole("admin");
+    public boolean isAdmin() {
+        return hasRole("admin");
     }
     
     /**

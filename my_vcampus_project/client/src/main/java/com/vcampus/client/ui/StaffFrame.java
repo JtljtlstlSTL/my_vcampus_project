@@ -3,14 +3,12 @@ package com.vcampus.client.ui;
 import com.vcampus.client.net.NettyClient;
 import com.vcampus.common.message.Request;
 import com.vcampus.common.message.Response;
-import com.vcampus.client.ui.component.SvgButton;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Map;
-
 
 /**
  * 教职工用户主界面
@@ -325,13 +323,13 @@ public class StaffFrame extends JFrame {
                         if (statusTimer != null && statusTimer.isRunning()) {
                             statusTimer.stop();
                         }
-                        
+
                         // 立即关闭当前界面
                         StaffFrame.this.dispose();
-                        
+
                         // 立即打开新的登录界面
                         new LoginFrame().setVisible(true);
-                        
+
                         log.info("通过窗口关闭事件退出登录完成");
                     } catch (Exception ex) {
                         log.error("窗口关闭处理过程中发生错误", ex);
@@ -345,25 +343,25 @@ public class StaffFrame extends JFrame {
     private void handleLogout() {
         try {
             log.info("开始退出登录流程: {}", userData.get("userName"));
-            
+
             // 立即停止定时器
             if (statusTimer != null && statusTimer.isRunning()) {
                 statusTimer.stop();
                 log.debug("状态栏定时器已停止");
             }
-            
+
             // 立即清理资源
             cleanupResources();
-            
+
             // 立即关闭当前界面
             this.dispose();
-            
+
             // 立即打开新的登录界面
             LoginFrame loginFrame = new LoginFrame();
             loginFrame.setVisible(true);
-            
+
             log.info("退出登录完成，已返回登录界面");
-            
+
             // 在后台线程中发送退出登录请求（不阻塞UI）
             new Thread(() -> {
                 try {
@@ -395,7 +393,7 @@ public class StaffFrame extends JFrame {
             }
         }
     }
-    
+
     /**
      * 清理资源
      */
@@ -406,18 +404,18 @@ public class StaffFrame extends JFrame {
                 statusTimer.stop();
                 log.debug("状态栏定时器已停止");
             }
-            
+
             // 清理用户数据引用
             if (userData != null) {
                 userData.clear();
                 log.debug("用户数据引用已清理");
             }
-            
+
         } catch (Exception e) {
             log.warn("资源清理过程中发生异常: {}", e.getMessage());
         }
     }
-    
+
     /**
      * 处理修改密码
      */
@@ -432,7 +430,7 @@ public class StaffFrame extends JFrame {
         // 创建主面板
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
+
         // 创建表单面板
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -499,13 +497,13 @@ public class StaffFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
 
         JTextArea passwordRequirements = new JTextArea(
-            "密码要求：\n" +
-            "• 长度至少8个字符\n" +
-            "• 必须包含以下至少两种类型的字符：\n" +
-            "  - 数字 (0-9)\n" +
-            "  - 大写字母 (A-Z)\n" +
-            "  - 小写字母 (a-z)\n" +
-            "  - 特殊符号 (!@#$%^&*等)"
+                "密码要求：\n" +
+                        "• 长度至少8个字符\n" +
+                        "• 必须包含以下至少两种类型的字符：\n" +
+                        "  - 数字 (0-9)\n" +
+                        "  - 大写字母 (A-Z)\n" +
+                        "  - 小写字母 (a-z)\n" +
+                        "  - 特殊符号 (!@#$%^&*等)"
         );
         passwordRequirements.setEditable(false);
         passwordRequirements.setOpaque(false);
@@ -515,21 +513,21 @@ public class StaffFrame extends JFrame {
         formPanel.add(passwordRequirements, gbc);
 
         mainPanel.add(formPanel, BorderLayout.CENTER);
-        
+
         // 创建按钮面板
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         JButton btnConfirm = new JButton("确认修改");
         JButton btnCancel = new JButton("取消");
-        
+
         btnConfirm.setPreferredSize(new Dimension(100, 30));
         btnCancel.setPreferredSize(new Dimension(100, 30));
 
         buttonPanel.add(btnConfirm);
         buttonPanel.add(btnCancel);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-        
+
         dialog.add(mainPanel);
-        
+
         // 添加密码强度检测
         txtNewPassword.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
@@ -583,54 +581,87 @@ public class StaffFrame extends JFrame {
             String oldPassword = new String(txtOldPassword.getPassword());
             String newPassword = new String(txtNewPassword.getPassword());
             String confirmPassword = new String(txtConfirmPassword.getPassword());
-            
+
             // 验证输入
             if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "请填写所有密码字段！", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             if (!newPassword.equals(confirmPassword)) {
                 JOptionPane.showMessageDialog(dialog, "新密码与确认密码不一致！", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             if (!isPasswordValid(newPassword)) {
                 JOptionPane.showMessageDialog(dialog, "新密码不符合强度要求！\n请确保密码长度至少8位，且包含至少两种不同类型的字符。", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             // 发送修改密码请求
             changePassword(oldPassword, newPassword, dialog);
         });
-        
+
         btnCancel.addActionListener(e -> dialog.dispose());
-        
+
         // 显示对话框
         dialog.setVisible(true);
     }
-    
+
     /**
      * 创建密码显示/隐藏切换按钮
      */
-
     private JButton createPasswordToggleButton(JPasswordField passwordField) {
-        SvgButton toggleButton = new SvgButton("/figures/eye_close.svg");
+        JButton toggleButton = new JButton();
         toggleButton.setPreferredSize(new Dimension(30, 30));
         toggleButton.setBorderPainted(false);
         toggleButton.setContentAreaFilled(false);
         toggleButton.setFocusPainted(false);
 
-        // 初始状态（密码隐藏）
-        passwordField.setEchoChar('•');
+        // 尝试加载图标
+        ImageIcon eyeOpenIcon = null;
+        ImageIcon eyeCloseIcon = null;
+
+        try {
+            eyeOpenIcon = new ImageIcon(getClass().getResource("/figures/eye_open.png"));
+            eyeCloseIcon = new ImageIcon(getClass().getResource("/figures/eye_close.png"));
+
+            // 缩放图标到合适大小
+            eyeOpenIcon = new ImageIcon(eyeOpenIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+            eyeCloseIcon = new ImageIcon(eyeCloseIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+
+        } catch (Exception e) {
+            log.warn("密码显示图标加载失败，使用文本按钮");
+        }
+
+        // 设置初始状态（密码隐藏）
+        final ImageIcon finalEyeOpenIcon = eyeOpenIcon;
+        final ImageIcon finalEyeCloseIcon = eyeCloseIcon;
+
+        if (finalEyeCloseIcon != null) {
+            toggleButton.setIcon(finalEyeCloseIcon);
+        } else {
+            toggleButton.setText("显示");
+            toggleButton.setFont(new Font("微软雅黑", Font.PLAIN, 10));
+        }
 
         toggleButton.addActionListener(e -> {
             if (passwordField.getEchoChar() == 0) {
+                // 当前显示密码，切换为隐藏
                 passwordField.setEchoChar('•');
-                toggleButton.setSvgIcon("/figures/eye_close.svg");
+                if (finalEyeCloseIcon != null) {
+                    toggleButton.setIcon(finalEyeCloseIcon);
+                } else {
+                    toggleButton.setText("显示");
+                }
             } else {
+                // 当前隐藏密码，切换为显示
                 passwordField.setEchoChar((char) 0);
-                toggleButton.setSvgIcon("/figures/eye_open.svg");
+                if (finalEyeOpenIcon != null) {
+                    toggleButton.setIcon(finalEyeOpenIcon);
+                } else {
+                    toggleButton.setText("隐藏");
+                }
             }
         });
 
@@ -644,12 +675,12 @@ public class StaffFrame extends JFrame {
         if (password.length() < 8) {
             return 0;
         }
-        
+
         boolean hasDigit = false;
         boolean hasUpperCase = false;
         boolean hasLowerCase = false;
         boolean hasSpecialChar = false;
-        
+
         for (char c : password.toCharArray()) {
             if (Character.isDigit(c)) {
                 hasDigit = true;
@@ -661,14 +692,14 @@ public class StaffFrame extends JFrame {
                 hasSpecialChar = true;
             }
         }
-        
+
         // 计算满足的条件数量
         int conditionsMet = 0;
         if (hasDigit) conditionsMet++;
         if (hasUpperCase) conditionsMet++;
         if (hasLowerCase) conditionsMet++;
         if (hasSpecialChar) conditionsMet++;
-        
+
         return conditionsMet;
     }
 
@@ -727,10 +758,10 @@ public class StaffFrame extends JFrame {
             log.info("发送密码修改请求，用户卡号: {}", cardNumStr);
 
             Request request = new Request("auth/changepassword")
-                .addParam("cardNum", cardNumStr)
-                .addParam("oldPassword", oldPassword)
-                .addParam("newPassword", newPassword)
-                .addParam("userType", "staff"); // 添加用户类型参数
+                    .addParam("cardNum", cardNumStr)
+                    .addParam("oldPassword", oldPassword)
+                    .addParam("newPassword", newPassword)
+                    .addParam("userType", "staff"); // 添加用户类型参数
 
             // 发送请求，增加超时时间
             Response response = nettyClient.sendRequest(request).get(10, java.util.concurrent.TimeUnit.SECONDS);
@@ -748,7 +779,7 @@ public class StaffFrame extends JFrame {
                 });
                 log.warn("用户 {} 密码修改失败: {}", userData.get("userName"), errorMsg);
             }
-            
+
         } catch (java.util.concurrent.TimeoutException e) {
             log.error("密码修改请求超时", e);
             SwingUtilities.invokeLater(() -> {
