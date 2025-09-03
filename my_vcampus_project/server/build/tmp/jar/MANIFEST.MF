@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: VCampus Server
-Implementation-Version: 1.0.0
-Main-Class: com.vcampus.server.ServerApplication
-

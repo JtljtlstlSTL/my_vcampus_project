@@ -1,9 +1,0 @@
-JarIndex-Version: 1.0
-
-netty-resolver-dns-native-macos-4.1.100.Final-osx-x86_64.jar
-META-INF
-META-INF/maven
-META-INF/maven/io.netty
-META-INF/maven/io.netty/netty-resolver-dns-native-macos
-META-INF/native
-

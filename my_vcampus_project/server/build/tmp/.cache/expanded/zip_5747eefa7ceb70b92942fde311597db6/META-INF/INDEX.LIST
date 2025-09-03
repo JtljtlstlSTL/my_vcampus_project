@@ -1,8 +1,0 @@
-JarIndex-Version: 1.0
-
-netty-all-4.1.100.Final.jar
-META-INF
-META-INF/maven
-META-INF/maven/io.netty
-META-INF/maven/io.netty/netty-all
-

@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: VCampus Client
-Implementation-Version: 1.0.0
-Main-Class: com.vcampus.client.ClientApplication
-
