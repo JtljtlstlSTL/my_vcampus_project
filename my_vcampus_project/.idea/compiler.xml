@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.32/17d46b3e205515e1e8efd3ee4d57ce8018914163/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="my-vcampus-project.client.main" />
+        <module name="my-vcampus-project.server.test" />
+        <module name="my-vcampus-project.common.test" />
+        <module name="my-vcampus-project.server.main" />
+        <module name="my-vcampus-project.client.test" />
+        <module name="my-vcampus-project.common.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="21" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="my-vcampus-project.client" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.client.main" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.client.test" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.common" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.common.main" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.common.test" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.server" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.server.main" options="-Xlint:none -nowarn" />
+      <module name="my-vcampus-project.server.test" options="-Xlint:none -nowarn" />
+    </option>
+  </component>
+</project>

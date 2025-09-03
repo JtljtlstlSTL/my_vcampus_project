@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.library.mapper.BorrowRuleMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="BorrowRuleResultMap" type="com.vcampus.server.core.library.entity.BorrowRule">
+        <id column="rule_id" property="ruleId"/>
+        <result column="user_type" property="userType" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="max_borrow_count" property="maxBorrowCount"/>
+        <result column="max_borrow_days" property="maxBorrowDays"/>
+        <result column="max_renew_count" property="maxRenewCount"/>
+        <result column="renew_extend_days" property="renewExtendDays"/>
+        <result column="overdue_fine" property="overdueFine"/>
+        <result column="is_active" property="isActive"/>
+    </resultMap>
+    
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        rule_id, user_type, max_borrow_count, max_borrow_days, max_renew_count, renew_extend_days, overdue_fine, is_active
+    </sql>
+    
+    <!-- 根据ID查询 -->
+    <select id="findById" parameterType="int" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        WHERE rule_id = #{ruleId}
+    </select>
+    
+    <!-- 查询所有规则 -->
+    <select id="findAll" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        ORDER BY user_type
+    </select>
+    
+    <!-- 根据用户类型查询 -->
+    <select id="findByUserType" parameterType="string" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        WHERE user_type = #{userType} AND is_active = true
+    </select>
+    
+    <!-- 查询所有启用的规则 -->
+    <select id="findAllActiveRules" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        WHERE is_active = true
+        ORDER BY user_type
+    </select>
+    
+    <!-- 查询所有规则（包括禁用的） -->
+    <select id="findAllRules" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        ORDER BY user_type
+    </select>
+    
+    <!-- 根据最大借阅数量范围查询 -->
+    <select id="findByMaxBorrowCountRange" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        WHERE max_borrow_count > #{minCount} AND max_borrow_count < #{maxCount} AND is_active = true
+        ORDER BY max_borrow_count
+    </select>
+    
+    <!-- 根据最大借阅天数范围查询 -->
+    <select id="findByMaxBorrowDaysRange" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        WHERE max_borrow_days > #{minDays} AND max_borrow_days < #{maxDays} AND is_active = true
+        ORDER BY max_borrow_days
+    </select>
+    
+    <!-- 根据逾期罚金范围查询 -->
+    <select id="findByOverdueFineRange" resultMap="BorrowRuleResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBorrowRule
+        WHERE overdue_fine > #{minFine} AND overdue_fine < #{maxFine} AND is_active = true
+        ORDER BY overdue_fine
+    </select>
+    
+    <!-- 插入规则 -->
+    <insert id="insert" parameterType="com.vcampus.server.core.library.entity.BorrowRule" useGeneratedKeys="true" keyProperty="ruleId">
+        INSERT INTO tblBorrowRule (user_type, max_borrow_count, max_borrow_days, max_renew_count, renew_extend_days, overdue_fine, is_active)
+        VALUES (#{userType}, #{maxBorrowCount}, #{maxBorrowDays}, #{maxRenewCount}, #{renewExtendDays}, #{overdueFine}, #{isActive})
+    </insert>
+    
+    <!-- 更新规则 -->
+    <update id="update" parameterType="com.vcampus.server.core.library.entity.BorrowRule">
+        UPDATE tblBorrowRule
+        SET user_type = #{userType},
+            max_borrow_count = #{maxBorrowCount},
+            max_borrow_days = #{maxBorrowDays},
+            max_renew_count = #{maxRenewCount},
+            renew_extend_days = #{renewExtendDays},
+            overdue_fine = #{overdueFine},
+            is_active = #{isActive}
+        WHERE rule_id = #{ruleId}
+    </update>
+    
+    <!-- 根据ID删除 -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM tblBorrowRule WHERE rule_id = #{ruleId}
+    </delete>
+    
+    <!-- 检查是否存在 -->
+    <select id="existsById" parameterType="int" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblBorrowRule WHERE rule_id = #{ruleId}
+    </select>
+    
+    <!-- 统计数量 -->
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM tblBorrowRule
+    </select>
+    
+    <!-- 检查用户类型是否已有规则 -->
+    <select id="isUserTypeRuleExists" parameterType="string" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblBorrowRule WHERE user_type = #{userType}
+    </select>
+    
+    <!-- 检查用户类型是否已有启用的规则 -->
+    <select id="isActiveUserTypeRuleExists" parameterType="string" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblBorrowRule WHERE user_type = #{userType} AND is_active = true
+    </select>
+    
+    <!-- 更新规则状态 -->
+    <update id="updateRuleStatus">
+        UPDATE tblBorrowRule SET is_active = #{isActive} WHERE rule_id = #{ruleId}
+    </update>
+    
+</mapper>

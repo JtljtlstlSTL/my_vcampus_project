@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.library.mapper.BookCategoryMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="BookCategoryResultMap" type="com.vcampus.server.core.library.entity.BookCategory">
+        <id column="category_id" property="categoryId"/>
+        <result column="category_code" property="categoryCode"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="description" property="description"/>
+        <result column="sort_order" property="sortOrder"/>
+    </resultMap>
+    
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        category_id, category_code, category_name, description, sort_order
+    </sql>
+    
+    <!-- 根据ID查询 -->
+    <select id="findById" parameterType="int" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        WHERE category_id = #{categoryId}
+    </select>
+    
+    <!-- 查询所有分类 -->
+    <select id="findAll" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        ORDER BY sort_order
+    </select>
+    
+    <!-- 根据分类代码查询 -->
+    <select id="findByCategoryCode" parameterType="string" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        WHERE category_code = #{categoryCode}
+    </select>
+    
+    <!-- 根据分类名称查询 -->
+    <select id="findByCategoryName" parameterType="string" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        WHERE category_name = #{categoryName}
+    </select>
+    
+    <!-- 根据分类名称模糊查询 -->
+    <select id="findByCategoryNameLike" parameterType="string" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        WHERE category_name LIKE CONCAT('%', #{categoryName}, '%')
+        ORDER BY sort_order
+    </select>
+    
+    <!-- 根据描述模糊查询 -->
+    <select id="findByDescriptionLike" parameterType="string" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        WHERE description LIKE CONCAT('%', #{description}, '%')
+        ORDER BY sort_order
+    </select>
+    
+    <!-- 按排序顺序查询所有分类 -->
+    <select id="findAllOrderBySort" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        ORDER BY sort_order
+    </select>
+    
+    <!-- 按分类代码排序查询所有分类 -->
+    <select id="findAllOrderByCode" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        ORDER BY category_code
+    </select>
+    
+    <!-- 查询基本大类（A-Z） -->
+    <select id="findBasicCategories" resultMap="BookCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblBookCategory
+        WHERE category_code REGEXP '^[A-Z]$' AND category_code NOT IN ('L', 'M', 'W', 'Y')
+        ORDER BY category_code
+    </select>
+    
+    <!-- 插入分类 -->
+    <insert id="insert" parameterType="com.vcampus.server.core.library.entity.BookCategory" useGeneratedKeys="true" keyProperty="categoryId">
+        INSERT INTO tblBookCategory (category_code, category_name, description, sort_order)
+        VALUES (#{categoryCode}, #{categoryName}, #{description}, #{sortOrder})
+    </insert>
+    
+    <!-- 更新分类 -->
+    <update id="update" parameterType="com.vcampus.server.core.library.entity.BookCategory">
+        UPDATE tblBookCategory
+        SET category_code = #{categoryCode},
+            category_name = #{categoryName},
+            description = #{description},
+            sort_order = #{sortOrder}
+        WHERE category_id = #{categoryId}
+    </update>
+    
+    <!-- 根据ID删除 -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM tblBookCategory WHERE category_id = #{categoryId}
+    </delete>
+    
+    <!-- 检查是否存在 -->
+    <select id="existsById" parameterType="int" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblBookCategory WHERE category_id = #{categoryId}
+    </select>
+    
+    <!-- 统计数量 -->
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM tblBookCategory
+    </select>
+    
+    <!-- 检查分类代码是否已存在 -->
+    <select id="isCategoryCodeExists" parameterType="string" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblBookCategory WHERE category_code = #{categoryCode}
+    </select>
+    
+    <!-- 检查分类名称是否已存在 -->
+    <select id="isCategoryNameExists" parameterType="string" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblBookCategory WHERE category_name = #{categoryName}
+    </select>
+    
+    <!-- 获取下一个排序顺序 -->
+    <select id="getNextSortOrder" resultType="int">
+        SELECT COALESCE(MAX(sort_order), 0) + 1 FROM tblBookCategory
+    </select>
+    
+    <!-- 更新分类排序顺序 -->
+    <update id="updateSortOrder">
+        UPDATE tblBookCategory SET sort_order = #{sortOrder} WHERE category_id = #{categoryId}
+    </update>
+    
+</mapper>
