@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.shop.mapper.ProductTransMapper">
+
+    <resultMap id="ProductTransResultMap" type="com.vcampus.server.core.shop.entity.ProductTrans">
+        <id column="trans_Id" property="transId"/>
+        <result column="product_Id" property="productId"/>
+        <result column="cardNum" property="cardNum"/>
+        <result column="Qty" property="qty"/>
+        <result column="Amount" property="amount"/>
+        <result column="Trans_time" property="transTime"/>
+        <result column="status" property="status" javaType="com.vcampus.server.core.shop.enums.OrderStatus" typeHandler="com.vcampus.server.core.shop.mapper.OrderStatusTypeHandler"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        trans_Id, product_Id, cardNum, Qty, Amount, Trans_time, status
+    </sql>
+
+    <select id="findById" parameterType="int" resultMap="ProductTransResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct_trans
+        WHERE trans_Id = #{transId}
+    </select>
+
+    <select id="findAll" resultMap="ProductTransResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct_trans
+        ORDER BY Trans_time DESC
+    </select>
+
+    <select id="findByCardNum" parameterType="string" resultMap="ProductTransResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct_trans
+        WHERE cardNum = #{cardNum}
+        ORDER BY Trans_time DESC
+    </select>
+
+    <select id="findByProductId" parameterType="int" resultMap="ProductTransResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct_trans
+        WHERE product_Id = #{productId}
+        ORDER BY Trans_time DESC
+    </select>
+
+    <select id="findRecentOrders" parameterType="int" resultMap="ProductTransResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct_trans
+        ORDER BY Trans_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.shop.entity.ProductTrans" useGeneratedKeys="true" keyProperty="transId">
+        INSERT INTO tblProduct_trans (product_Id, cardNum, Qty, Amount, status)
+        VALUES (#{productId}, #{cardNum}, #{qty}, #{amount}, #{status, javaType=com.vcampus.server.core.shop.enums.OrderStatus, typeHandler=com.vcampus.server.core.shop.mapper.OrderStatusTypeHandler})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.shop.entity.ProductTrans">
+        UPDATE tblProduct_trans
+        SET product_Id = #{productId},
+            cardNum = #{cardNum},
+            Qty = #{qty},
+            Amount = #{amount},
+            status = #{status, javaType=com.vcampus.server.core.shop.enums.OrderStatus, typeHandler=com.vcampus.server.core.shop.mapper.OrderStatusTypeHandler}
+        WHERE trans_Id = #{transId}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM tblProduct_trans WHERE trans_Id = #{transId}
+    </delete>
+
+    <select id="existsById" parameterType="int" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblProduct_trans WHERE trans_Id = #{transId}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM tblProduct_trans
+    </select>
+
+    <update id="updateStatus">
+        UPDATE tblProduct_trans SET status = #{status, javaType=com.vcampus.server.core.shop.enums.OrderStatus, typeHandler=com.vcampus.server.core.shop.mapper.OrderStatusTypeHandler} WHERE trans_Id = #{transId}
+    </update>
+
+    <update id="updateTransTime">
+        UPDATE tblProduct_trans SET Trans_time = #{transTime} WHERE trans_Id = #{transId}
+    </update>
+
+    <select id="countOrdersByCardNum" parameterType="string" resultType="long">
+        SELECT COUNT(1) FROM tblProduct_trans WHERE cardNum = #{cardNum}
+    </select>
+
+    <select id="countOrdersByProductId" parameterType="int" resultType="long">
+        SELECT COUNT(1) FROM tblProduct_trans WHERE product_Id = #{productId}
+    </select>
+
+</mapper>

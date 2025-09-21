@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.library.mapper.LibraryStatisticsMapper">
+
+    <!-- ResultMaps -->
+    <resultMap id="UserStatisticsResultMap" type="com.vcampus.server.core.library.entity.search.UserStatistics">
+        <result property="cardNum" column="cardNum"/>
+        <result property="name" column="name"/>
+        <result property="userType" column="user_type"/>
+        <result property="totalBorrows" column="total_borrows"/>
+        <result property="currentBorrows" column="current_borrows"/>
+        <result property="overdueCount" column="overdue_count"/>
+        <result property="returnedCount" column="returned_count"/>
+        <result property="avgBorrowDays" column="avg_borrow_days"/>
+    </resultMap>
+
+    <resultMap id="UserBorrowStatisticsResultMap" type="com.vcampus.server.core.library.entity.view.UserBorrowStatistics">
+        <result property="cardNum" column="cardNum"/>
+        <result property="name" column="name"/>
+        <result property="userType" column="user_type"/>
+        <result property="totalBorrows" column="total_borrows"/>
+        <result property="currentBorrows" column="current_borrows"/>
+        <result property="overdueCount" column="overdue_count"/>
+        <result property="returnedCount" column="returned_count"/>
+    </resultMap>
+
+    <resultMap id="CategoryStatisticsResultMap" type="com.vcampus.server.core.library.entity.view.CategoryStatistics">
+        <result property="categoryCode" column="category_code"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="totalBooks" column="total_books"/>
+        <result property="totalCopies" column="total_copies"/>
+        <result property="availableCopies" column="available_copies"/>
+        <result property="totalBorrows" column="total_borrows"/>
+    </resultMap>
+
+    <resultMap id="OverdueStatisticsResultMap" type="com.vcampus.server.core.library.entity.view.OverdueStatistics">
+        <result property="userType" column="user_type"/>
+        <result property="overdueCount" column="overdue_count"/>
+        <result property="avgOverdueDays" column="avg_overdue_days"/>
+        <result property="maxOverdueDays" column="max_overdue_days"/>
+    </resultMap>
+
+    <!-- 存储过程调用 -->
+    <select id="getUserStatistics" statementType="CALLABLE" resultMap="UserStatisticsResultMap">
+        {CALL sp_get_user_statistics(#{cardNum})}
+    </select>
+
+    <!-- 视图查询 -->
+    <select id="getUserBorrowStatistics" resultMap="UserBorrowStatisticsResultMap">
+        SELECT * FROM v_user_borrow_statistics ORDER BY total_borrows DESC
+    </select>
+
+    <select id="getCategoryStatistics" resultMap="CategoryStatisticsResultMap">
+        SELECT * FROM v_category_statistics ORDER BY total_borrows DESC
+    </select>
+
+    <select id="getOverdueStatistics" resultMap="OverdueStatisticsResultMap">
+        SELECT * FROM v_overdue_statistics ORDER BY overdue_count DESC
+    </select>
+
+</mapper>

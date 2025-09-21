@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.library.mapper.BookRecommendationMapper">
+
+    <!-- ResultMaps -->
+    <resultMap id="BookRecommendationResultMap" type="com.vcampus.server.core.library.entity.core.BookRecommendation">
+        <id property="recId" column="rec_id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="bookTitle" column="book_title"/>
+        <result property="bookAuthor" column="book_author"/>
+        <result property="bookPublisher" column="book_publisher"/>
+        <result property="bookIsbn" column="book_isbn"/>
+        <result property="bookCategory" column="book_category"/>
+        <result property="recommendQty" column="recommend_qty"/>
+        <result property="recommendReason" column="recommend_reason"/>
+        <result property="recommendTime" column="recommend_time"/>
+        <result property="status" column="status" javaType="com.vcampus.server.core.library.enums.RecommendStatus"/>
+        <result property="adminFeedback" column="admin_feedback"/>
+        <result property="adminCardNum" column="admin_cardNum"/>
+        <result property="processTime" column="process_time"/>
+    </resultMap>
+
+    <resultMap id="RecommendationHistoryResultMap" type="com.vcampus.server.core.library.entity.view.RecommendationHistory">
+        <id property="recId" column="rec_id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="userName" column="user_name"/>
+        <result property="userType" column="user_type"/>
+        <result property="bookTitle" column="book_title"/>
+        <result property="bookAuthor" column="book_author"/>
+        <result property="bookPublisher" column="book_publisher"/>
+        <result property="bookIsbn" column="book_isbn"/>
+        <result property="bookCategory" column="book_category"/>
+        <result property="bookCategoryName" column="book_category_name"/>
+        <result property="recommendQty" column="recommend_qty"/>
+        <result property="recommendReason" column="recommend_reason"/>
+        <result property="recommendTime" column="recommend_time"/>
+        <result property="status" column="status"/>
+        <result property="statusDescription" column="status_description"/>
+        <result property="adminFeedback" column="admin_feedback"/>
+        <result property="adminCardNum" column="admin_cardNum"/>
+        <result property="adminName" column="admin_name"/>
+        <result property="processTime" column="process_time"/>
+    </resultMap>
+
+    <!-- CRUD Operations -->
+    <select id="findById" resultMap="BookRecommendationResultMap">
+        SELECT * FROM tblBookRecommendation WHERE rec_id = #{recId}
+    </select>
+
+    <select id="findAll" resultMap="BookRecommendationResultMap">
+        SELECT * FROM tblBookRecommendation ORDER BY rec_id DESC
+    </select>
+
+    <select id="findByCardNum" resultMap="BookRecommendationResultMap">
+        SELECT * FROM tblBookRecommendation WHERE cardNum = #{cardNum} ORDER BY rec_id DESC
+    </select>
+
+    <select id="findByStatus" resultMap="BookRecommendationResultMap">
+        SELECT * FROM tblBookRecommendation WHERE status = #{status} ORDER BY rec_id DESC
+    </select>
+
+    <select id="findByIsbn" resultMap="BookRecommendationResultMap">
+        SELECT * FROM tblBookRecommendation WHERE book_isbn = #{isbn} ORDER BY rec_id DESC
+    </select>
+
+    <select id="findByTitleLike" resultMap="BookRecommendationResultMap">
+        SELECT * FROM tblBookRecommendation WHERE book_title LIKE CONCAT('%', #{title}, '%') ORDER BY rec_id DESC
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.library.entity.core.BookRecommendation" useGeneratedKeys="true" keyProperty="recId">
+        INSERT INTO tblBookRecommendation (cardNum, book_title, book_author, book_publisher, book_isbn, book_category, recommend_qty, recommend_reason, recommend_time, status, admin_feedback, admin_cardNum, process_time)
+        VALUES (#{cardNum}, #{bookTitle}, #{bookAuthor}, #{bookPublisher}, #{bookIsbn}, #{bookCategory}, #{recommendQty}, #{recommendReason}, #{recommendTime}, #{status}, #{adminFeedback}, #{adminCardNum}, #{processTime})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.library.entity.core.BookRecommendation">
+        UPDATE tblBookRecommendation SET
+            cardNum = #{cardNum},
+            book_title = #{bookTitle},
+            book_author = #{bookAuthor},
+            book_publisher = #{bookPublisher},
+            book_isbn = #{bookIsbn},
+            book_category = #{bookCategory},
+            recommend_qty = #{recommendQty},
+            recommend_reason = #{recommendReason},
+            recommend_time = #{recommendTime},
+            status = #{status},
+            admin_feedback = #{adminFeedback},
+            admin_cardNum = #{adminCardNum},
+            process_time = #{processTime}
+        WHERE rec_id = #{recId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM tblBookRecommendation WHERE rec_id = #{recId}
+    </delete>
+
+    <select id="existsById" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM tblBookRecommendation WHERE rec_id = #{recId}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM tblBookRecommendation
+    </select>
+
+    <!-- Business Queries -->
+    <select id="countByCardNum" resultType="long">
+        SELECT COUNT(*) FROM tblBookRecommendation WHERE cardNum = #{cardNum}
+    </select>
+
+    <select id="countByStatus" resultType="long">
+        SELECT COUNT(*) FROM tblBookRecommendation WHERE status = #{status}
+    </select>
+
+    <update id="updateStatus">
+        UPDATE tblBookRecommendation SET
+            status = #{status},
+            admin_feedback = #{feedback},
+            admin_cardNum = #{adminCardNum},
+            process_time = NOW()
+        WHERE rec_id = #{recId}
+    </update>
+
+    <update id="updateAdminFeedback">
+        UPDATE tblBookRecommendation SET
+            admin_feedback = #{adminFeedback},
+            admin_cardNum = #{adminCardNum},
+            process_time = NOW()
+        WHERE rec_id = #{recId}
+    </update>
+
+    <!-- View Queries -->
+    <select id="getUserRecommendationHistory" resultMap="RecommendationHistoryResultMap">
+        SELECT 
+            br.rec_id,
+            br.cardNum,
+            u.Name AS user_name,
+            u.userType,
+            br.book_title,
+            br.book_author,
+            br.book_publisher,
+            br.book_isbn,
+            br.book_category,
+            bc.category_name AS book_category_name,
+            br.recommend_qty,
+            br.recommend_reason,
+            br.recommend_time,
+            br.status,
+            CASE 
+                WHEN br.status = 'PENDING' THEN '待审核'
+                WHEN br.status = 'APPROVED' THEN '已通过'
+                WHEN br.status = 'REJECTED' THEN '已拒绝'
+                WHEN br.status = 'PURCHASED' THEN '已采购'
+                ELSE '未知状态'
+            END AS status_description,
+            br.admin_feedback,
+            br.admin_cardNum,
+            admin_u.Name AS admin_name,
+            br.process_time
+        FROM tblBookRecommendation br
+        LEFT JOIN tblUser u ON br.cardNum = u.cardNum
+        LEFT JOIN tblBookCategory bc ON br.book_category = bc.category_code
+        LEFT JOIN tblUser admin_u ON br.admin_cardNum = admin_u.cardNum
+        WHERE br.cardNum = #{cardNum}
+        ORDER BY br.rec_id DESC
+    </select>
+
+    <select id="getAllRecommendationHistory" resultMap="RecommendationHistoryResultMap">
+        SELECT 
+            br.rec_id,
+            br.cardNum,
+            u.Name AS user_name,
+            u.userType,
+            br.book_title,
+            br.book_author,
+            br.book_publisher,
+            br.book_isbn,
+            br.book_category,
+            bc.category_name AS book_category_name,
+            br.recommend_qty,
+            br.recommend_reason,
+            br.recommend_time,
+            br.status,
+            CASE 
+                WHEN br.status = 'PENDING' THEN '待审核'
+                WHEN br.status = 'APPROVED' THEN '已通过'
+                WHEN br.status = 'REJECTED' THEN '已拒绝'
+                WHEN br.status = 'PURCHASED' THEN '已采购'
+                ELSE '未知状态'
+            END AS status_description,
+            br.admin_feedback,
+            br.admin_cardNum,
+            admin_u.Name AS admin_name,
+            br.process_time
+        FROM tblBookRecommendation br
+        LEFT JOIN tblUser u ON br.cardNum = u.cardNum
+        LEFT JOIN tblBookCategory bc ON br.book_category = bc.category_code
+        LEFT JOIN tblUser admin_u ON br.admin_cardNum = admin_u.cardNum
+        ORDER BY br.rec_id DESC
+    </select>
+
+</mapper>

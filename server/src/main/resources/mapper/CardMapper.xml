@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.card.mapper.CardMapper">
+
+    <resultMap id="CardResult" type="com.vcampus.server.core.card.entity.Card">
+        <id property="cardId" column="card_Id" />
+        <result property="cardNum" column="cardNum" />
+        <result property="balance" column="balance" />
+        <result property="status" column="status" />
+    </resultMap>
+
+    <select id="findByCardNum" resultMap="CardResult" parameterType="String">
+        SELECT card_Id, cardNum, balance, status
+        FROM tblCard
+        WHERE cardNum = #{cardNum}
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.card.entity.Card" useGeneratedKeys="true" keyProperty="cardId">
+        INSERT INTO tblCard (cardNum, balance, status)
+        VALUES (#{cardNum}, #{balance}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.card.entity.Card">
+        UPDATE tblCard
+        SET balance = #{balance}, status = #{status}
+        WHERE card_Id = #{cardId}
+    </update>
+
+    <delete id="deleteByCardNum" parameterType="String">
+        DELETE FROM tblCard WHERE cardNum = #{cardNum}
+    </delete>
+
+    <select id="existsByCardNum" resultType="boolean" parameterType="String">
+        SELECT CASE WHEN COUNT(*)>0 THEN 1 ELSE 0 END FROM tblCard WHERE cardNum = #{cardNum}
+    </select>
+
+    <update id="updateBalanceDelta" parameterType="map">
+        UPDATE tblCard
+        SET balance = balance + #{delta}
+        WHERE cardNum = #{cardNum}
+    </update>
+
+    <!-- 原子性扣款：当余额 >= amount 时才执行扣款 -->
+    <update id="decreaseBalanceIfEnough" parameterType="map">
+        UPDATE tblCard
+        SET balance = balance - #{amount}
+        WHERE cardNum = #{cardNum} AND balance >= #{amount}
+    </update>
+
+</mapper>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.library.mapper.MyBookshelfMapper">
+
+    <!-- ResultMaps -->
+    <resultMap id="MyBookshelfResultMap" type="com.vcampus.server.core.library.entity.core.MyBookshelf">
+        <id property="shelfId" column="shelf_id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="bookId" column="book_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="addTime" column="add_time"/>
+        <result property="notes" column="notes"/>
+    </resultMap>
+
+    <resultMap id="BookshelfViewResultMap" type="com.vcampus.server.core.library.entity.view.BookshelfView">
+        <id property="shelfId" column="shelf_id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="bookId" column="book_id"/>
+        <result property="bookTitle" column="book_title"/>
+        <result property="bookAuthor" column="book_author"/>
+        <result property="bookPublisher" column="book_publisher"/>
+        <result property="bookIsbn" column="book_isbn"/>
+        <result property="bookCategory" column="book_category"/>
+        <result property="bookCategoryName" column="book_category_name"/>
+        <result property="location" column="location"/>
+        <result property="totalQty" column="total_qty"/>
+        <result property="availQty" column="avail_qty"/>
+        <result property="bookStatus" column="book_status"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="addTime" column="add_time"/>
+        <result property="notes" column="notes"/>
+    </resultMap>
+
+    <!-- CRUD Operations -->
+    <select id="findById" resultMap="MyBookshelfResultMap">
+        SELECT * FROM tblMyBookshelf WHERE shelf_id = #{shelfId}
+    </select>
+
+    <select id="findAll" resultMap="MyBookshelfResultMap">
+        SELECT * FROM tblMyBookshelf ORDER BY shelf_id DESC
+    </select>
+
+    <select id="findByCardNum" resultMap="MyBookshelfResultMap">
+        SELECT * FROM tblMyBookshelf WHERE cardNum = #{cardNum} ORDER BY shelf_id DESC
+    </select>
+
+    <select id="findByCardNumAndCategory" resultMap="MyBookshelfResultMap">
+        SELECT * FROM tblMyBookshelf 
+        WHERE cardNum = #{cardNum} AND category_name = #{categoryName} 
+        ORDER BY shelf_id DESC
+    </select>
+
+    <select id="findByCardNumAndBookId" resultMap="MyBookshelfResultMap">
+        SELECT * FROM tblMyBookshelf 
+        WHERE cardNum = #{cardNum} AND book_id = #{bookId}
+    </select>
+
+    <select id="findByBookId" resultMap="MyBookshelfResultMap">
+        SELECT * FROM tblMyBookshelf WHERE book_id = #{bookId} ORDER BY shelf_id DESC
+    </select>
+
+    <select id="findByCategoryName" resultMap="MyBookshelfResultMap">
+        SELECT * FROM tblMyBookshelf WHERE category_name = #{categoryName} ORDER BY shelf_id DESC
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.library.entity.core.MyBookshelf" useGeneratedKeys="true" keyProperty="shelfId">
+        INSERT INTO tblMyBookshelf (cardNum, book_id, category_name, add_time, notes)
+        VALUES (#{cardNum}, #{bookId}, #{categoryName}, #{addTime}, #{notes})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.library.entity.core.MyBookshelf">
+        UPDATE tblMyBookshelf SET
+            cardNum = #{cardNum},
+            book_id = #{bookId},
+            category_name = #{categoryName},
+            add_time = #{addTime},
+            notes = #{notes}
+        WHERE shelf_id = #{shelfId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM tblMyBookshelf WHERE shelf_id = #{shelfId}
+    </delete>
+
+    <delete id="deleteByCardNumAndBookId">
+        DELETE FROM tblMyBookshelf WHERE cardNum = #{cardNum} AND book_id = #{bookId}
+    </delete>
+
+    <select id="existsById" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM tblMyBookshelf WHERE shelf_id = #{shelfId}
+    </select>
+
+    <select id="isBookInBookshelf" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM tblMyBookshelf WHERE cardNum = #{cardNum} AND book_id = #{bookId}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM tblMyBookshelf
+    </select>
+
+    <!-- Business Queries -->
+    <select id="countByCardNum" resultType="long">
+        SELECT COUNT(*) FROM tblMyBookshelf WHERE cardNum = #{cardNum}
+    </select>
+
+    <select id="countByCardNumAndCategory" resultType="long">
+        SELECT COUNT(*) FROM tblMyBookshelf 
+        WHERE cardNum = #{cardNum} AND category_name = #{categoryName}
+    </select>
+
+    <update id="updateCategory">
+        UPDATE tblMyBookshelf SET category_name = #{categoryName} WHERE shelf_id = #{shelfId}
+    </update>
+
+    <update id="updateNotes">
+        UPDATE tblMyBookshelf SET notes = #{notes} WHERE shelf_id = #{shelfId}
+    </update>
+
+    <!-- View Queries -->
+    <select id="getUserBookshelfView" resultMap="BookshelfViewResultMap">
+        SELECT 
+            mb.shelf_id,
+            mb.cardNum,
+            mb.book_id,
+            b.Title AS book_title,
+            b.Author AS book_author,
+            b.Publisher AS book_publisher,
+            b.isbn AS book_isbn,
+            b.Category AS book_category,
+            bc.category_name AS book_category_name,
+            b.Location AS location,
+            b.Total_qty AS total_qty,
+            b.Avail_qty AS avail_qty,
+            b.Status AS book_status,
+            mb.category_name,
+            mb.add_time,
+            mb.notes
+        FROM tblMyBookshelf mb
+        LEFT JOIN tblBook b ON mb.book_id = b.book_Id
+        LEFT JOIN tblBookCategory bc ON b.Category = bc.category_code
+        WHERE mb.cardNum = #{cardNum}
+        ORDER BY mb.shelf_id DESC
+    </select>
+
+    <select id="getUserBookshelfViewByCategory" resultMap="BookshelfViewResultMap">
+        SELECT 
+            mb.shelf_id,
+            mb.cardNum,
+            mb.book_id,
+            b.Title AS book_title,
+            b.Author AS book_author,
+            b.Publisher AS book_publisher,
+            b.isbn AS book_isbn,
+            b.Category AS book_category,
+            bc.category_name AS book_category_name,
+            b.Location AS location,
+            b.Total_qty AS total_qty,
+            b.Avail_qty AS avail_qty,
+            b.Status AS book_status,
+            mb.category_name,
+            mb.add_time,
+            mb.notes
+        FROM tblMyBookshelf mb
+        LEFT JOIN tblBook b ON mb.book_id = b.book_Id
+        LEFT JOIN tblBookCategory bc ON b.Category = bc.category_code
+        WHERE mb.cardNum = #{cardNum} AND mb.category_name = #{categoryName}
+        ORDER BY mb.shelf_id DESC
+    </select>
+
+    <select id="getUserCategoryNames" resultType="string">
+        SELECT DISTINCT category_name 
+        FROM tblMyBookshelf 
+        WHERE cardNum = #{cardNum} 
+        ORDER BY category_name
+    </select>
+
+</mapper>

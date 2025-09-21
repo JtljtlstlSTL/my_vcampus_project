@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.library.mapper.BookMapper">
+
+    <!-- ResultMaps -->
+    <resultMap id="BookResultMap" type="com.vcampus.server.core.library.entity.core.Book">
+        <id property="bookId" column="book_Id"/>
+        <result property="isbn" column="isbn"/>
+        <result property="title" column="Title"/>
+        <result property="author" column="Author"/>
+        <result property="publisher" column="Publisher"/>
+        <result property="publishDate" column="Publish_date"/>
+        <result property="category" column="Category"/>
+        <result property="location" column="Location"/>
+        <result property="totalQty" column="Total_qty"/>
+        <result property="availQty" column="Avail_qty"/>
+        <result property="status" column="Status"/>
+    </resultMap>
+
+    <resultMap id="BookBorrowStatusResultMap" type="com.vcampus.server.core.library.entity.view.BookBorrowStatus">
+        <id property="bookId" column="book_Id"/>
+        <result property="isbn" column="isbn"/>
+        <result property="title" column="Title"/>
+        <result property="author" column="Author"/>
+        <result property="category" column="Category"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="location" column="Location"/>
+        <result property="totalQty" column="Total_qty"/>
+        <result property="availQty" column="Avail_qty"/>
+        <result property="bookStatus" column="Status"/>
+        <result property="borrowStatus" column="borrow_status"/>
+    </resultMap>
+
+    <resultMap id="BookSearchResultMap" type="com.vcampus.server.core.library.entity.search.BookSearchResult">
+        <id property="bookId" column="book_Id"/>
+        <result property="isbn" column="isbn"/>
+        <result property="title" column="Title"/>
+        <result property="author" column="Author"/>
+        <result property="publisher" column="Publisher"/>
+        <result property="publishDate" column="Publish_date"/>
+        <result property="category" column="Category"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="location" column="Location"/>
+        <result property="totalQty" column="Total_qty"/>
+        <result property="availQty" column="Avail_qty"/>
+        <result property="status" column="Status"/>
+        <result property="borrowStatus" column="borrow_status"/>
+        <result property="borrowCount" column="borrow_count"/>
+    </resultMap>
+
+    <resultMap id="PopularBookResultMap" type="com.vcampus.server.core.library.entity.search.PopularBook">
+        <id property="bookId" column="book_Id"/>
+        <result property="title" column="Title"/>
+        <result property="author" column="Author"/>
+        <result property="category" column="Category"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="totalQty" column="Total_qty"/>
+        <result property="availQty" column="Avail_qty"/>
+        <result property="borrowCount" column="borrow_count"/>
+        <result property="popularityRank" column="popularity_rank"/>
+    </resultMap>
+
+    <resultMap id="BookBorrowStatisticsResultMap" type="com.vcampus.server.core.library.entity.view.BookBorrowStatistics">
+        <id property="bookId" column="book_Id"/>
+        <result property="title" column="Title"/>
+        <result property="author" column="Author"/>
+        <result property="category" column="Category"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="totalQty" column="Total_qty"/>
+        <result property="availQty" column="Avail_qty"/>
+        <result property="totalBorrows" column="total_borrows"/>
+        <result property="currentBorrows" column="current_borrows"/>
+        <result property="overdueCount" column="overdue_count"/>
+        <result property="borrowRate" column="borrow_rate"/>
+    </resultMap>
+
+    <resultMap id="BookStatisticsResultMap" type="com.vcampus.server.core.library.entity.search.BookStatistics">
+        <id property="bookId" column="book_Id"/>
+        <result property="title" column="Title"/>
+        <result property="author" column="Author"/>
+        <result property="category" column="Category"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="totalQty" column="Total_qty"/>
+        <result property="availQty" column="Avail_qty"/>
+        <result property="totalBorrows" column="total_borrows"/>
+        <result property="currentBorrows" column="current_borrows"/>
+        <result property="overdueCount" column="overdue_count"/>
+        <result property="returnedCount" column="returned_count"/>
+    </resultMap>
+
+    <resultMap id="AddBookResultMap" type="com.vcampus.server.core.library.entity.result.AddBookResult">
+        <result property="result" column="result"/>
+        <result property="bookId" column="book_id"/>
+    </resultMap>
+
+    <resultMap id="UpdateBookResultMap" type="com.vcampus.server.core.library.entity.result.UpdateBookResult">
+        <result property="result" column="result"/>
+    </resultMap>
+
+    <!-- CRUD Operations -->
+    <select id="findById" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE book_Id = #{bookId}
+    </select>
+
+    <select id="findAll" resultMap="BookResultMap">
+        SELECT * FROM tblBook ORDER BY book_Id
+    </select>
+
+    <select id="findByIsbn" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE isbn = #{isbn}
+    </select>
+
+    <select id="findByTitleLike" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Title LIKE CONCAT('%', #{title}, '%')
+    </select>
+
+    <select id="findByAuthorLike" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Author LIKE CONCAT('%', #{author}, '%')
+    </select>
+
+    <select id="findByPublisherLike" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Publisher LIKE CONCAT('%', #{publisher}, '%')
+    </select>
+
+    <select id="findByCategory" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Category = #{category}
+    </select>
+
+    <select id="findByLocation" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Location = #{location}
+    </select>
+
+    <select id="findAvailableBooks" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Avail_qty > 0 AND Status = 'IN_LIBRARY'
+    </select>
+
+    <select id="findOutOfStockBooks" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Avail_qty = 0
+    </select>
+
+    <select id="searchBooks" resultMap="BookResultMap">
+        SELECT * FROM tblBook 
+        WHERE Title LIKE CONCAT('%', #{keyword}, '%') 
+           OR Author LIKE CONCAT('%', #{keyword}, '%')
+           OR Publisher LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY book_Id
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.library.entity.core.Book" useGeneratedKeys="true" keyProperty="bookId">
+        INSERT INTO tblBook (isbn, Title, Author, Publisher, Publish_date, Category, Location, Total_qty, Avail_qty, Status)
+        VALUES (#{isbn}, #{title}, #{author}, #{publisher}, #{publishDate}, #{category}, #{location}, #{totalQty}, #{availQty}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.library.entity.core.Book">
+        UPDATE tblBook SET
+            isbn = #{isbn},
+            Title = #{title},
+            Author = #{author},
+            Publisher = #{publisher},
+            Publish_date = #{publishDate},
+            Category = #{category},
+            Location = #{location},
+            Total_qty = #{totalQty},
+            Avail_qty = #{availQty},
+            Status = #{status}
+        WHERE book_Id = #{bookId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM tblBook WHERE book_Id = #{bookId}
+    </delete>
+
+    <select id="existsById" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM tblBook WHERE book_Id = #{bookId}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM tblBook
+    </select>
+
+    <update id="updateStock">
+        UPDATE tblBook SET Avail_qty = #{availQty} WHERE book_Id = #{bookId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tblBook SET Status = #{status} WHERE book_Id = #{bookId}
+    </update>
+
+    <!-- Stored Procedures -->
+    <select id="addBook" statementType="CALLABLE" resultMap="AddBookResultMap">
+        {CALL sp_add_book(#{isbn}, #{title}, #{author}, #{publisher}, #{publishDate}, #{category}, #{location}, #{totalQty})}
+    </select>
+
+    <select id="updateBook" statementType="CALLABLE" resultMap="UpdateBookResultMap">
+        {CALL sp_update_book(#{bookId}, #{title}, #{author}, #{publisher}, #{publishDate}, #{category}, #{location}, #{totalQty})}
+    </select>
+
+    <select id="getBookStatistics" statementType="CALLABLE" resultMap="BookStatisticsResultMap">
+        {CALL sp_get_book_statistics(#{bookId})}
+    </select>
+
+
+    <select id="searchPopularBooks" statementType="CALLABLE" resultMap="PopularBookResultMap">
+        {CALL sp_search_popular_books(#{category}, #{limit})}
+    </select>
+
+    <select id="searchBooksByCategory" statementType="CALLABLE" resultMap="BookSearchResultMap">
+        {CALL sp_search_books_by_category(#{category}, #{availableOnly}, #{limit})}
+    </select>
+
+    <!-- View Queries -->
+    <select id="getBookBorrowStatus" resultMap="BookBorrowStatusResultMap">
+        SELECT * FROM v_book_borrow_status
+    </select>
+
+    <select id="getBookBorrowStatistics" resultMap="BookBorrowStatisticsResultMap">
+        SELECT * FROM v_book_borrow_statistics
+    </select>
+
+    <select id="getPopularBooks" resultMap="PopularBookResultMap">
+        SELECT * FROM v_popular_books
+    </select>
+
+    <!-- 缺失的方法映射 -->
+    <select id="findByPage" resultMap="BookResultMap">
+        SELECT * FROM tblBook 
+        ORDER BY book_Id 
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="findByStatus" resultMap="BookResultMap">
+        SELECT * FROM tblBook WHERE Status = #{status}
+    </select>
+
+    <select id="findByConditions" resultMap="BookResultMap">
+        SELECT * FROM tblBook 
+        <where>
+            <if test="title != null and title != ''">
+                AND Title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="author != null and author != ''">
+                AND Author LIKE CONCAT('%', #{author}, '%')
+            </if>
+            <if test="publisher != null and publisher != ''">
+                AND Publisher LIKE CONCAT('%', #{publisher}, '%')
+            </if>
+            <if test="category != null and category != ''">
+                AND Category = #{category}
+            </if>
+            <if test="status != null">
+                AND Status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="countByStatus" resultType="long">
+        SELECT COUNT(*) FROM tblBook WHERE Status = #{status}
+    </select>
+
+    <select id="countByCategory" resultType="map">
+        SELECT Category, COUNT(*) as count FROM tblBook GROUP BY Category
+    </select>
+    
+    <select id="getCategoryStatistics" resultType="map">
+        SELECT Category, COUNT(*) as count FROM tblBook GROUP BY Category ORDER BY Category
+    </select>
+
+</mapper>

@@ -1,0 +1,24 @@
+# Ignore Gradle build output
+.gradle/
+**/build/
+**/bin/
+
+# IntelliJ IDEA / JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Other common Java outputs
+out/
+classes/

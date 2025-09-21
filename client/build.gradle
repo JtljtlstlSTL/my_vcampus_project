@@ -1,0 +1,127 @@
+// Client模块配置
+description = 'VCampus客户端模块 - 用户界面和网络通信'
+
+ext.javafxVersion = '20'
+
+def getJavaFXPlatform() {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if (os.isWindows()) return 'win'
+    if (os.isMacOsX()) return 'mac'
+    if (os.isLinux()) return 'linux'
+    return ''
+}
+
+def javafxPlatform = getJavaFXPlatform()
+
+// 新增：LWJGL/OpenAL 版本与 natives 分类器配置
+ext.lwjglVersion = '3.3.2'
+def getLWJGLNatives() {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if (os.isWindows()) return 'natives-windows'
+    if (os.isMacOsX()) return 'natives-macos'
+    if (os.isLinux()) return 'natives-linux'
+    return ''
+}
+
+def lwjglNatives = getLWJGLNatives()
+
+dependencies {
+    // 依赖Common模块
+    implementation project(':common')
+    
+    // 网络通信
+    implementation 'io.netty:netty-all:4.1.100.Final'
+    
+    // GUI框架 - Swing (简单易用)
+    implementation 'com.formdev:flatlaf:3.2.5'  // 现代化外观
+    // implementation 'com.miglayout:miglayout-swing:7.3.1'  // 暂时注释掉，使用标准布局
+    
+    // JavaFX - 用于视频播放（MediaPlayer）
+    // 使用 VLCJ (libVLC Java 绑定) 实现视频播放，避免 JavaFX 模块路径问题
+    implementation 'uk.co.caprica:vlcj:4.7.1'
+    // explicit JNA (可选，vlcj 会传递依赖)
+    implementation 'net.java.dev.jna:jna:5.13.0'
+
+    // LWJGL OpenAL，用于替代系统 OpenAL 或在运行时提供本地库
+    implementation "org.lwjgl:lwjgl-openal:${lwjglVersion}"
+    implementation "org.lwjgl:lwjgl:${lwjglVersion}"
+    // 平台本地库（runtimeOnly）
+    if (lwjglNatives) {
+        runtimeOnly "org.lwjgl:lwjgl-openal:${lwjglVersion}:${lwjglNatives}"
+        runtimeOnly "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
+    }
+
+    // 图标
+    implementation 'org.kordamp.ikonli:ikonli-swing:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1'
+
+    // SVG 支持 - Apache Batik
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.14'
+    implementation 'org.apache.xmlgraphics:batik-codec:1.14'
+
+    // Excel文件处理 - Apache POI
+    implementation 'org.apache.poi:poi:5.2.4'
+    implementation 'org.apache.poi:poi-ooxml:5.2.4'
+    implementation 'org.apache.poi:poi-scratchpad:5.2.4'
+
+    // JFreeChart for data visualization
+    implementation 'org.jfree:jfreechart:1.5.3'
+    
+    // Logback for logging
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    implementation 'ch.qos.logback:logback-core:1.4.11'
+
+    // 用于AI助手API调用的OkHttp依赖
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+
+    // OpenCV Java SDK (本地 DLL + JAR，支持人脸识别)
+    implementation files('lib/opencv-4110.jar')
+}
+
+// 应用插件
+apply plugin: 'application'
+
+// 在编译时显示过时 API 位置，便于修复警告
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:deprecation']
+}
+
+// 主类配置
+application {
+    // 使用常规类路径方式运行（移除 --module-path / --add-modules 导致的模块化问题）
+    mainClass = 'com.vcampus.client.ClientApplication'
+
+    // 运行时默认 JVM 参数：指向本地 libvlc/native 目录，便于在没有全局安装 VLC 的机器上使用局部 libVLC
+    // 使用方法：把 libvlc 的 DLL/so/dylib 和 plugins 文件夹放到 client/libs/vlc 下（或修改下面的路径）
+    applicationDefaultJvmArgs = [
+        "-Djna.library.path=${projectDir}/libs/vlc",
+        "-Djava.library.path=${projectDir}/libs/vlc"
+    ]
+}
+
+// 运行任务时确保 PATH 包含本地 libvlc 目录（Windows 下让 JVM 能加载 DLL）
+tasks.named('run') {
+    doFirst {
+        def vlcDir = file("${projectDir}/libs/vlc").absolutePath
+        if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            environment 'PATH', vlcDir + File.pathSeparator + (System.getenv('PATH') ?: '')
+        } else if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            // macOS 时可将 libvlc 放到 libs/vlc/lib 并设置 DYLD_LIBRARY_PATH 或 JNA 路径
+            environment 'DYLD_LIBRARY_PATH', vlcDir + File.pathSeparator + (System.getenv('DYLD_LIBRARY_PATH') ?: '')
+        } else if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+            environment 'LD_LIBRARY_PATH', vlcDir + File.pathSeparator + (System.getenv('LD_LIBRARY_PATH') ?: '')
+        }
+    }
+}
+
+// 打包配置
+jar {
+    archiveBaseName = 'vcampus-client'
+    manifest {
+        attributes(
+            'Implementation-Title': 'VCampus Client',
+            'Implementation-Version': project.version,
+            'Main-Class': 'com.vcampus.client.ClientApplication'
+        )
+    }
+}

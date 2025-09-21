@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.library.mapper.BookBorrowMapper">
+
+    <!-- ResultMaps -->
+    <resultMap id="BookBorrowResultMap" type="com.vcampus.server.core.library.entity.core.BookBorrow">
+        <id property="transId" column="trans_Id"/>
+        <result property="bookId" column="book_Id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="borrowTime" column="Borrow_time"/>
+        <result property="returnTime" column="Return_time"/>
+        <result property="dueTime" column="Due_time"/>
+        <result property="status" column="Status"/>
+        <result property="renewCount" column="Renew_count"/>
+        <result property="remarks" column="Remarks"/>
+    </resultMap>
+
+    <resultMap id="UserBorrowHistoryResultMap" type="com.vcampus.server.core.library.entity.view.UserBorrowHistory">
+        <id property="transId" column="trans_Id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="userName" column="user_name"/>
+        <result property="userType" column="user_type"/>
+        <result property="bookTitle" column="book_title"/>
+        <result property="bookAuthor" column="book_author"/>
+        <result property="bookCategory" column="book_category"/>
+        <result property="bookCategoryName" column="book_category_name"/>
+        <result property="borrowTime" column="borrow_time"/>
+        <result property="dueTime" column="due_time"/>
+        <result property="returnTime" column="return_time"/>
+        <result property="borrowStatus" column="borrow_status"/>
+        <result property="renewCount" column="renew_count"/>
+        <result property="displayStatus" column="display_status"/>
+    </resultMap>
+
+    <resultMap id="BookBorrowWithUserNameResultMap" type="java.util.Map">
+        <id property="transId" column="trans_Id"/>
+        <result property="bookId" column="book_Id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="userName" column="user_name"/>
+        <result property="borrowTime" column="Borrow_time"/>
+        <result property="returnTime" column="Return_time"/>
+        <result property="dueTime" column="Due_time"/>
+        <result property="status" column="Status"/>
+        <result property="renewCount" column="Renew_count"/>
+        <result property="remarks" column="Remarks"/>
+    </resultMap>
+
+    <resultMap id="OverdueDetailsResultMap" type="com.vcampus.server.core.library.entity.view.OverdueDetails">
+        <id property="transId" column="trans_Id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="userName" column="user_name"/>
+        <result property="userType" column="user_type"/>
+        <result property="bookTitle" column="book_title"/>
+        <result property="bookAuthor" column="book_author"/>
+        <result property="borrowTime" column="borrow_time"/>
+        <result property="dueTime" column="due_time"/>
+        <result property="overdueDays" column="overdue_days"/>
+        <result property="renewCount" column="renew_count"/>
+    </resultMap>
+
+    <resultMap id="RecentBorrowResultMap" type="com.vcampus.server.core.library.entity.view.RecentBorrow">
+        <id property="transId" column="trans_Id"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="userName" column="user_name"/>
+        <result property="bookTitle" column="book_title"/>
+        <result property="bookAuthor" column="book_author"/>
+        <result property="borrowTime" column="borrow_time"/>
+        <result property="dueTime" column="due_time"/>
+        <result property="status" column="status"/>
+        <result property="daysSinceBorrow" column="days_since_borrow"/>
+    </resultMap>
+
+    <resultMap id="BorrowResultMap" type="com.vcampus.server.core.library.entity.result.BorrowResult">
+        <result property="success" column="success"/>
+        <result property="message" column="result"/>
+        <result property="transId" column="trans_id"/>
+    </resultMap>
+
+    <resultMap id="ReturnResultMap" type="com.vcampus.server.core.library.entity.result.ReturnResult">
+        <result property="success" column="success"/>
+        <result property="message" column="result"/>
+        <result property="overdueDays" column="overdue_days"/>
+    </resultMap>
+
+    <resultMap id="RenewResultMap" type="com.vcampus.server.core.library.entity.result.RenewResult">
+        <result property="success" column="success"/>
+        <result property="message" column="result"/>
+        <result property="newDueTime" column="new_due_time"/>
+    </resultMap>
+
+    <resultMap id="OverdueCheckResultMap" type="com.vcampus.server.core.library.entity.result.OverdueCheckResult">
+        <result property="success" column="success"/>
+        <result property="result" column="result"/>
+        <result property="updatedCount" column="updated_count"/>
+    </resultMap>
+
+    <!-- CRUD Operations -->
+    <select id="findById" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE trans_Id = #{transId}
+    </select>
+
+    <select id="findAll" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findByBookId" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE book_Id = #{bookId} ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findByCardNum" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE cardNum = #{cardNum} ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findByStatus" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE Status = #{status} ORDER BY trans_Id DESC
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.library.entity.core.BookBorrow" useGeneratedKeys="true" keyProperty="transId">
+        INSERT INTO tblBook_trans (book_Id, cardNum, Borrow_time, Return_time, Due_time, Status, Renew_count, Remarks)
+        VALUES (#{bookId}, #{cardNum}, #{borrowTime}, #{returnTime}, #{dueTime}, #{status}, #{renewCount}, #{remarks})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.library.entity.core.BookBorrow">
+        UPDATE tblBook_trans SET
+            book_Id = #{bookId},
+            cardNum = #{cardNum},
+            Borrow_time = #{borrowTime},
+            Return_time = #{returnTime},
+            Due_time = #{dueTime},
+            Status = #{status},
+            Renew_count = #{renewCount},
+            Remarks = #{remarks}
+        WHERE trans_Id = #{transId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM tblBook_trans WHERE trans_Id = #{transId}
+    </delete>
+
+    <select id="existsById" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM tblBook_trans WHERE trans_Id = #{transId}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM tblBook_trans
+    </select>
+
+    <!-- Business Queries -->
+    <select id="findCurrentBorrowsByCardNum" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE cardNum = #{cardNum} AND Status = 'BORROWED' ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findReturnedBorrowsByCardNum" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE cardNum = #{cardNum} AND Status = 'RETURNED' ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findOverdueBorrowsByCardNum" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE cardNum = #{cardNum} AND Status = 'OVERDUE' ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findAllOverdueBorrows" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE Status = 'OVERDUE' ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findCurrentBorrowsByBookId" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE book_Id = #{bookId} AND Status = 'BORROWED' ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findBorrowHistoryByBookId" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE book_Id = #{bookId} ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findBorrowHistoryByBookIdWithUserName" resultMap="BookBorrowWithUserNameResultMap">
+        SELECT 
+            bt.trans_Id,
+            bt.book_Id,
+            bt.cardNum,
+            u.Name as user_name,
+            bt.Borrow_time,
+            bt.Return_time,
+            bt.Due_time,
+            bt.Status,
+            bt.Renew_count,
+            bt.Remarks
+        FROM tblBook_trans bt
+        LEFT JOIN tblUser u ON bt.cardNum = u.cardNum
+        WHERE bt.book_Id = #{bookId} 
+        ORDER BY bt.trans_Id DESC
+    </select>
+
+    <select id="findBorrowHistoryByUser" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE cardNum = #{cardNum} ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findOverdueRecords" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans WHERE Status = 'OVERDUE' ORDER BY trans_Id DESC
+    </select>
+
+    <select id="findExpiringRecords" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans 
+        WHERE Status = 'BORROWED' 
+        AND Due_time BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL #{days} DAY)
+        ORDER BY Due_time ASC
+    </select>
+
+    <select id="findRecentBorrows" resultMap="BookBorrowResultMap">
+        SELECT * FROM tblBook_trans ORDER BY trans_Id DESC LIMIT #{limit}
+    </select>
+
+    <select id="countBorrowsByCardNum" resultType="long">
+        SELECT COUNT(*) FROM tblBook_trans WHERE cardNum = #{cardNum}
+    </select>
+
+    <select id="countCurrentBorrowsByCardNum" resultType="long">
+        SELECT COUNT(*) FROM tblBook_trans WHERE cardNum = #{cardNum} AND Status = 'BORROWED'
+    </select>
+
+    <select id="countBorrowsByBookId" resultType="long">
+        SELECT COUNT(*) FROM tblBook_trans WHERE book_Id = #{bookId}
+    </select>
+
+    <select id="countOverdueRecords" resultType="long">
+        SELECT COUNT(*) FROM tblBook_trans WHERE Status = 'OVERDUE'
+    </select>
+
+    <select id="isBookBorrowedByUser" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM tblBook_trans WHERE book_Id = #{bookId} AND cardNum = #{cardNum} AND Status = 'BORROWED'
+    </select>
+
+    <update id="updateStatus">
+        UPDATE tblBook_trans SET Status = #{status} WHERE trans_Id = #{transId}
+    </update>
+
+    <update id="updateReturnTime">
+        UPDATE tblBook_trans SET Return_time = #{returnTime} WHERE trans_Id = #{transId}
+    </update>
+
+    <update id="updateReturnInfo">
+        UPDATE tblBook_trans SET Return_time = #{returnTime}, Status = #{status} WHERE trans_Id = #{transId}
+    </update>
+
+    <update id="updateRenewInfo">
+        UPDATE tblBook_trans SET Due_time = #{newDueTime}, Renew_count = #{newRenewCount} WHERE trans_Id = #{transId}
+    </update>
+
+    <!-- Stored Procedures -->
+    <select id="borrowBook" statementType="CALLABLE" resultMap="BorrowResultMap">
+        {CALL sp_borrow_book(#{bookId}, #{cardNum}, #{borrowDays})}
+    </select>
+
+    <select id="returnBook" statementType="CALLABLE" resultMap="ReturnResultMap">
+        {CALL sp_return_book(#{transId})}
+    </select>
+
+    <select id="renewBook" statementType="CALLABLE" resultMap="RenewResultMap">
+        {CALL sp_renew_book(#{transId}, #{extendDays})}
+    </select>
+
+    <select id="checkOverdue" statementType="CALLABLE" resultMap="OverdueCheckResultMap">
+        {CALL sp_check_overdue()}
+    </select>
+
+    <!-- View Queries -->
+    <select id="getUserBorrowHistory" resultMap="UserBorrowHistoryResultMap">
+        SELECT * FROM v_user_borrow_history WHERE cardNum = #{cardNum}
+    </select>
+
+    <select id="getAllUserBorrowHistory" resultMap="UserBorrowHistoryResultMap">
+        SELECT * FROM v_user_borrow_history ORDER BY trans_Id DESC
+    </select>
+
+    <select id="getOverdueDetails" resultMap="OverdueDetailsResultMap">
+        SELECT * FROM v_overdue_details ORDER BY overdue_days DESC
+    </select>
+
+    <select id="getRecentBorrows" resultMap="RecentBorrowResultMap">
+        SELECT * FROM v_recent_borrows 
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="getBorrowCountByBookId" resultType="int">
+        SELECT COUNT(*) FROM tblBook_trans 
+        WHERE book_Id = #{bookId}
+    </select>
+
+    <select id="getTodayBorrowCount" resultType="int">
+        SELECT COUNT(*) FROM tblBook_trans 
+        WHERE DATE(Borrow_time) = #{today}
+    </select>
+
+    <select id="getTodayReturnCount" resultType="int">
+        SELECT COUNT(*) FROM tblBook_trans 
+        WHERE DATE(Return_time) = #{today}
+    </select>
+
+    <select id="getTodayOverdueCount" resultType="int">
+        SELECT COUNT(*) FROM tblBook_trans 
+        WHERE Status = 'OVERDUE' AND DATE(Due_time) = #{today}
+    </select>
+
+    <select id="getBorrowTrendLast7Days" resultType="map">
+        SELECT 
+            CASE DAYOFWEEK(DATE(Borrow_time))
+                WHEN 1 THEN '周日'
+                WHEN 2 THEN '周一'
+                WHEN 3 THEN '周二'
+                WHEN 4 THEN '周三'
+                WHEN 5 THEN '周四'
+                WHEN 6 THEN '周五'
+                WHEN 7 THEN '周六'
+            END as day_name,
+            COUNT(*) as borrow_count
+        FROM tblBook_trans 
+        WHERE DATE(Borrow_time) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY DATE(Borrow_time)
+        ORDER BY DATE(Borrow_time)
+    </select>
+    
+    <!-- 获取用户借阅排名 -->
+    <select id="getUserBorrowRanking" resultType="java.util.Map">
+        SELECT 
+            u.Name as userName,
+            COUNT(bt.trans_Id) as borrowCount
+        FROM tblUser u
+        LEFT JOIN tblBook_trans bt ON u.cardNum = bt.cardNum
+        WHERE u.cardNum IS NOT NULL 
+            AND u.Name IS NOT NULL
+            AND u.Name != ''
+        GROUP BY u.cardNum, u.Name
+        HAVING borrowCount > 0
+        ORDER BY borrowCount DESC
+        LIMIT 10
+    </select>
+    
+    <!-- 获取各分类借阅统计 -->
+    <select id="getCategoryBorrowStatistics" resultType="java.util.Map">
+        SELECT 
+            b.Category as category,
+            COUNT(bt.trans_Id) as borrowCount
+        FROM tblBook b
+        LEFT JOIN tblBook_trans bt ON b.book_Id = bt.book_Id
+        WHERE b.Category IS NOT NULL 
+            AND b.Category != ''
+        GROUP BY b.Category
+        HAVING borrowCount > 0
+        ORDER BY borrowCount DESC
+    </select>
+
+</mapper>

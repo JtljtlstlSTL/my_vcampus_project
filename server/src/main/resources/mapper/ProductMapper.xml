@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.shop.mapper.ProductMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="ProductResultMap" type="com.vcampus.server.core.shop.entity.Product">
+        <id column="product_Id" property="productId"/>
+        <result column="Product_code" property="productCode"/>
+        <result column="Productname" property="productName"/>
+        <result column="Price" property="price"/>
+        <result column="Stock" property="stock"/>
+                                                                                                                                                                                                                                                       <result column="Product_status" property="status" javaType="com.vcampus.server.core.shop.enums.ProductStatus" typeHandler="com.vcampus.server.core.shop.mapper.ProductStatusTypeHandler"/>
+        <result column="Product_description" property="description"/>
+        <result column="Product_category" property="category"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        product_Id, Product_code, Productname, Price, Stock, Product_status, Product_description, Product_category, updated_at
+    </sql>
+
+    <select id="findById" parameterType="int" resultMap="ProductResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct
+        WHERE product_Id = #{productId}
+    </select>
+
+    <select id="findAll" resultMap="ProductResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct
+        ORDER BY Productname
+    </select>
+
+    <select id="findByCode" parameterType="string" resultMap="ProductResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct
+        WHERE Product_code = #{productCode}
+    </select>
+
+    <select id="findByNameLike" parameterType="string" resultMap="ProductResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct
+        WHERE Productname LIKE CONCAT('%', #{name}, '%')
+        ORDER BY Productname
+    </select>
+
+    <select id="findByCategory" parameterType="string" resultMap="ProductResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct
+        WHERE Product_category = #{category}
+        ORDER BY Productname
+    </select>
+
+    <select id="findAvailableProducts" resultMap="ProductResultMap">
+        <!-- 不再以 Stock>0 作为可见性条件，仅按上架状态返回，允许库存为0的商品被展示（前端显示售罄并禁止购买） -->
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProduct
+        WHERE Product_status = 'ON_SHELF'
+        ORDER BY Productname
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.shop.entity.Product" useGeneratedKeys="true" keyProperty="productId">
+        INSERT INTO tblProduct (Product_code, Productname, Price, Stock, Product_status, Product_description, Product_category)
+        VALUES (#{productCode}, #{productName}, #{price}, #{stock}, #{status, javaType=com.vcampus.server.core.shop.enums.ProductStatus, typeHandler=com.vcampus.server.core.shop.mapper.ProductStatusTypeHandler}, #{description}, #{category})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.shop.entity.Product">
+        UPDATE tblProduct
+        SET Product_code = #{productCode},
+            Productname = #{productName},
+            Price = #{price},
+            Stock = #{stock},
+            Product_status = #{status, javaType=com.vcampus.server.core.shop.enums.ProductStatus, typeHandler=com.vcampus.server.core.shop.mapper.ProductStatusTypeHandler},
+            Product_description = #{description},
+            Product_category = #{category}
+        WHERE product_Id = #{productId}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM tblProduct WHERE product_Id = #{productId}
+    </delete>
+
+    <select id="existsById" parameterType="int" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblProduct WHERE product_Id = #{productId}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM tblProduct
+    </select>
+
+    <update id="updateStock">
+        UPDATE tblProduct SET Stock = #{stock} WHERE product_Id = #{productId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tblProduct SET Product_status = #{status} WHERE product_Id = #{productId}
+    </update>
+
+    <update id="decreaseStockIfEnough">
+        UPDATE tblProduct
+        SET Stock = Stock - #{qty}
+        WHERE product_Id = #{productId}
+          AND Stock >= #{qty}
+    </update>
+
+    <update id="increaseStock">
+        UPDATE tblProduct
+        SET Stock = Stock + #{qty}
+        WHERE product_Id = #{productId}
+    </update>
+
+</mapper>

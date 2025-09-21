@@ -1,0 +1,74 @@
+// Server模块配置
+description = 'VCampus服务端模块 - 包含业务逻辑、数据处理等'
+
+dependencies {
+    // 依赖Common模块
+    implementation project(':common')
+    
+    // MyBatis依赖
+    implementation 'org.mybatis:mybatis:3.5.13'
+    implementation 'org.mybatis:mybatis-spring:2.1.1'
+    
+    // 网络通信
+    implementation 'io.netty:netty-all:4.1.100.Final'
+    
+    // 反射工具
+    implementation 'org.reflections:reflections:0.10.2'
+
+    // Apache POI for Excel processing
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
+    implementation 'org.apache.poi:poi-scratchpad:5.2.3'
+    
+    // JFreeChart for data visualization
+    implementation 'org.jfree:jfreechart:1.5.3'
+    
+    // Logback for logging
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    implementation 'ch.qos.logback:logback-core:1.4.11'
+    
+    // JUnit 4 测试框架
+    testImplementation 'junit:junit:4.13.2'
+}
+
+// 应用插件
+apply plugin: 'application'
+
+// 主类配置
+application {
+    mainClass = 'com.vcampus.server.ServerApplication'
+}
+
+// 打包配置
+jar {
+    // 使用临时名称以避免被占用文件阻塞构建
+    archiveBaseName = 'vcampus-server-temp'
+    manifest {
+        attributes(
+            'Implementation-Title': 'VCampus Server',
+            'Implementation-Version': project.version,
+            'Main-Class': 'com.vcampus.server.ServerApplication'
+        )
+    }
+    
+    // 包含所有依赖
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// 确保资源文件编码正确
+tasks.withType(AbstractCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// 确保资源文件被正确处理
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from('src/main/resources') {
+        include '**/*.xml'
+        include '**/*.properties'
+        filteringCharset = 'UTF-8'
+    }
+}

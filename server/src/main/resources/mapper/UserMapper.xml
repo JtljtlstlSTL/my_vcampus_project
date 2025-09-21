@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- Deprecated: Replaced by annotation-based com.vcampus.server.core.auth.mapper.UserMapper -->
+<!-- 保留空文件防止加载旧语句造成重复；若想彻底删除，可直接移除此文件。 -->
+<mapper namespace="deprecated.UserMapper"/>

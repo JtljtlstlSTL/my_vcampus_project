@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.course.mapper.CourseMapper">
+    <!-- 添加明确的结果映射 -->
+    <resultMap id="CourseResultMap" type="com.vcampus.server.core.course.entity.Course">
+        <id property="course_Id" column="course_Id"/>
+        <result property="courseName" column="courseName"/>
+        <result property="credit" column="Credit"/>
+        <result property="department" column="Department"/>
+    </resultMap>
+
+    <insert id="insertCourse" parameterType="com.vcampus.server.core.course.entity.Course" useGeneratedKeys="true" keyProperty="course_Id">
+        INSERT INTO tblCourse (courseName, Credit, Department)
+        VALUES (#{courseName}, #{credit}, #{department})
+    </insert>
+
+    <update id="updateCourse" parameterType="com.vcampus.server.core.course.entity.Course">
+        UPDATE tblCourse
+        SET courseName=#{courseName}, Credit=#{credit}, Department=#{department}
+        WHERE course_Id=#{course_Id}
+    </update>
+
+    <delete id="deleteCourse" parameterType="int">
+        DELETE FROM tblCourse WHERE course_Id=#{courseId}
+    </delete>
+
+    <select id="getCourseById" parameterType="int" resultMap="CourseResultMap">
+        SELECT course_Id, courseName, Credit, Department FROM tblCourse WHERE course_Id=#{courseId}
+    </select>
+
+    <select id="getAllCourses" resultMap="CourseResultMap">
+        SELECT course_Id, courseName, Credit, Department FROM tblCourse ORDER BY course_Id
+    </select>
+
+    <!-- 选课相关SQL -->
+    <select id="getSelectedCourses" parameterType="string" resultType="map">
+        SELECT s.section_Id, c.courseName, c.Credit, c.Department,
+               COALESCE(u.Name, s.Teacher_id) as teacher, s.Schedule, s.Room, s.Term
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblSection s ON e.section_Id = s.section_Id
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        LEFT JOIN tblStaff staff ON s.Teacher_id = staff.staff_Id OR s.Teacher_id = staff.cardNum
+        LEFT JOIN tblUser u ON staff.cardNum = u.cardNum
+        WHERE st.cardNum = #{cardNum}
+    </select>
+
+    <select id="getAvailableCourses" parameterType="string" resultType="map">
+        SELECT s.section_Id, c.courseName, c.Credit, c.Department,
+               COALESCE(u.Name, s.Teacher_id) as teacher, s.Schedule, s.Room, s.Term
+        FROM tblSection s
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        LEFT JOIN tblStaff staff ON s.Teacher_id = staff.staff_Id OR s.Teacher_id = staff.cardNum
+        LEFT JOIN tblUser u ON staff.cardNum = u.cardNum
+        WHERE s.section_Id NOT IN (
+            SELECT e.section_Id
+            FROM tblEnrollment e
+            JOIN tblStudent st ON e.student_Id = st.student_Id
+            WHERE st.cardNum = #{cardNum}
+        )
+        AND s.Capacity > (
+            SELECT COUNT(*) FROM tblEnrollment e2 WHERE e2.section_Id = s.section_Id
+        )
+    </select>
+
+    <insert id="selectCourse">
+        INSERT INTO tblEnrollment (student_Id, section_Id)
+        SELECT st.student_Id, #{sectionId}
+        FROM tblStudent st
+        WHERE st.cardNum = #{cardNum}
+          AND NOT EXISTS (
+            SELECT 1 FROM tblEnrollment e
+            WHERE e.student_Id = st.student_Id AND e.section_Id = #{sectionId}
+          )
+    </insert>
+
+    <delete id="dropCourse">
+        DELETE FROM tblEnrollment
+        WHERE student_Id = (SELECT st.student_Id FROM tblStudent st WHERE st.cardNum = #{cardNum})
+          AND section_Id = #{sectionId}
+    </delete>
+
+    <!-- 辅助：通过 cardNum 查 student_Id -->
+    <select id="getStudentIdByCardNum" parameterType="string" resultType="int">
+        SELECT student_Id FROM tblStudent WHERE cardNum = #{cardNum}
+    </select>
+
+    <!-- 辅助：section 是否存在 -->
+    <select id="sectionExists" parameterType="int" resultType="int">
+        SELECT COUNT(1) FROM tblSection WHERE section_Id = #{sectionId}
+    </select>
+
+    <!-- 辅助：检查时间冲突 - 简化版本，获取所有已选课程的时间 -->
+    <select id="checkTimeConflict" parameterType="map" resultType="map">
+        SELECT s1.Schedule as selectedSchedule, s2.Schedule as newSchedule
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblSection s1 ON e.section_Id = s1.section_Id
+        JOIN tblSection s2 ON s2.section_Id = #{sectionId}
+        WHERE st.cardNum = #{cardNum}
+          AND s1.Schedule IS NOT NULL
+          AND s2.Schedule IS NOT NULL
+          AND s1.Schedule != ''
+          AND s2.Schedule != ''
+        LIMIT 1
+    </select>
+
+    <!-- 获取学生已选课程的所有时间安排 -->
+    <select id="getStudentSchedules" parameterType="string" resultType="string">
+        SELECT s.Schedule
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblSection s ON e.section_Id = s.section_Id
+        WHERE st.cardNum = #{cardNum}
+          AND s.Schedule IS NOT NULL
+          AND s.Schedule != ''
+    </select>
+
+    <!-- 获取指定教学班的时间安排 -->
+    <select id="getSectionSchedule" parameterType="int" resultType="string">
+        SELECT Schedule FROM tblSection WHERE section_Id = #{sectionId}
+    </select>
+
+    <!-- 检查学生是否已选择同一门课程的其他教学班 -->
+    <select id="checkSameCourseConflict" parameterType="map" resultType="int">
+        SELECT COUNT(1)
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblSection s1 ON e.section_Id = s1.section_Id
+        JOIN tblSection s2 ON s2.section_Id = #{sectionId}
+        WHERE st.cardNum = #{cardNum}
+          AND s1.course_Id = s2.course_Id
+    </select>
+
+    <!-- 获取指定教学班的课程ID -->
+    <select id="getSectionCourseId" parameterType="int" resultType="int">
+        SELECT course_Id FROM tblSection WHERE section_Id = #{sectionId}
+    </select>
+
+    <!-- 获取学生成绩列表（已结课有成绩） -->
+    <select id="getScoreList" parameterType="string" resultType="map">
+        SELECT c.courseName, s.Term, e.Score, e.GPA
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblSection s ON e.section_Id = s.section_Id
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE st.cardNum = #{cardNum}
+          AND e.Score IS NOT NULL
+          AND e.GPA IS NOT NULL
+    </select>
+
+    <!-- 教学班管理相关SQL -->
+    <!-- 获取所有教学班信息（包含课程名称） -->
+    <select id="getAllSections" resultType="map">
+        SELECT 
+            s.section_Id,
+            c.courseName,
+            c.Credit,
+            c.Department,
+            s.Term,
+            s.Teacher_id,
+            COALESCE(u.Name, s.Teacher_id) as teacher,
+            s.Room,
+            s.Capacity,
+            s.Schedule,
+            COALESCE(AVG(e.Score), 0) as avgEvalScore
+        FROM tblSection s
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        LEFT JOIN tblStaff staff ON s.Teacher_id = staff.staff_Id OR s.Teacher_id = staff.cardNum
+        LEFT JOIN tblUser u ON staff.cardNum = u.cardNum
+        LEFT JOIN tblEdu_evaluate e ON s.section_Id = e.section_Id
+        GROUP BY s.section_Id, c.courseName, c.Credit, c.Department, s.Term, s.Teacher_id, u.Name, s.Room, s.Capacity, s.Schedule
+        ORDER BY s.section_Id
+    </select>
+
+    <!-- 新增：课程模糊查询功能 -->
+    <!-- 按关键字搜索课程（支持课程名称、院系模糊查询） -->
+    <select id="searchCourses" parameterType="string" resultMap="CourseResultMap">
+        SELECT course_Id, courseName, Credit, Department FROM tblCourse
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (courseName LIKE CONCAT('%', #{keyword}, '%')
+                 OR Department LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY course_Id
+    </select>
+
+    <!-- 按关键字搜索教学班（支持课程名称、教师、教室、学期模糊查询） -->
+    <select id="searchSections" parameterType="string" resultType="map">
+        SELECT s.section_Id, c.courseName, s.Term, s.Teacher_id, s.Room, s.Capacity, s.Schedule,
+               c.course_Id, c.Credit, c.Department
+        FROM tblSection s
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (c.courseName LIKE CONCAT('%', #{keyword}, '%')
+                 OR c.Department LIKE CONCAT('%', #{keyword}, '%')
+                 OR s.Teacher_id LIKE CONCAT('%', #{keyword}, '%')
+                 OR s.Room LIKE CONCAT('%', #{keyword}, '%')
+                 OR s.Term LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY s.section_Id
+    </select>
+
+    <!-- 按院系查询课程 -->
+    <select id="getCoursesByDepartment" parameterType="string" resultMap="CourseResultMap">
+        SELECT course_Id, courseName, Credit, Department FROM tblCourse
+        WHERE Department = #{department}
+        ORDER BY course_Id
+    </select>
+
+    <!-- 教师端功能SQL -->
+    <!-- 获取教师的所有教学班 -->
+    <select id="getTeacherSections" parameterType="string" resultType="map">
+        SELECT s.section_Id, c.courseName, s.Term, s.Teacher_id, s.Room, s.Capacity, s.Schedule,
+               c.course_Id, c.Credit, c.Department,
+               (SELECT COUNT(*) FROM tblEnrollment e WHERE e.section_Id = s.section_Id) as enrolledCount
+        FROM tblSection s
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE s.Teacher_id = #{teacherId}
+           OR s.Teacher_id = (
+               SELECT staff_Id FROM tblStaff WHERE cardNum = #{teacherId}
+           )
+        ORDER BY s.Term DESC, c.courseName
+    </select>
+
+    <!-- 获取教学班的所有学生信息 -->
+    <select id="getSectionStudents" parameterType="int" resultType="map">
+        SELECT st.student_Id, st.cardNum, u.Name as studentName, u.Gender as gender, st.Major as major, st.Grade as grade,
+               e.Score, e.GPA
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblUser u ON st.cardNum = u.cardNum
+        WHERE e.section_Id = #{sectionId}
+        ORDER BY st.cardNum
+    </select>
+
+    <!-- 更新学生成绩 -->
+    <update id="updateStudentScore">
+        UPDATE tblEnrollment
+        SET Score = #{score}, GPA = #{gpa}
+        WHERE student_Id = (SELECT student_Id FROM tblStudent WHERE cardNum = #{cardNum})
+          AND section_Id = #{sectionId}
+    </update>
+
+    <!-- 获取教学班学生成绩详情 -->
+    <select id="getStudentGrades" parameterType="int" resultType="map">
+        SELECT st.student_Id, st.cardNum, u.Name as studentName, u.Gender as gender, st.Major as major,
+               e.Score, e.GPA, c.courseName, c.Credit, s.Term
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblUser u ON st.cardNum = u.cardNum
+        JOIN tblSection s ON e.section_Id = s.section_Id
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE e.section_Id = #{sectionId}
+        ORDER BY st.cardNum
+    </select>
+
+    <!-- 新增：根据教师ID获取课程列表（按教学班分组） -->
+    <select id="getCoursesByTeacher" parameterType="string" resultType="map">
+        SELECT s.section_Id, c.courseName, c.Credit, c.Department, s.Term, s.Room, s.Capacity, s.Schedule
+        FROM tblSection s
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE s.Teacher_id = #{teacherId}
+        ORDER BY s.Term DESC, c.courseName
+    </select>
+
+    <!-- 新增：根据教学班ID获取成绩列表 -->
+    <select id="getScoreListBySectionId" parameterType="int" resultType="map">
+        SELECT st.student_Id, st.cardNum, u.Name as studentName, u.Gender as gender, st.Major as major,
+               e.Score, e.GPA
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblUser u ON st.cardNum = u.cardNum
+        WHERE e.section_Id = #{sectionId}
+        ORDER BY st.cardNum
+    </select>
+
+    <!-- 删除教学班 -->
+    <delete id="deleteSection" parameterType="int">
+        DELETE FROM tblSection WHERE section_Id = #{sectionId}
+    </delete>
+
+    <!-- 新增教学班 -->
+    <insert id="insertSection" parameterType="map">
+        INSERT INTO tblSection (course_Id, Term, Teacher_id, Room, Capacity, Schedule)
+        VALUES (#{courseId}, #{term}, #{teacherId}, #{room}, #{capacity}, #{schedule})
+    </insert>
+
+    <!-- 更新教学班信息 -->
+    <update id="updateSection" parameterType="map">
+        UPDATE tblSection
+        SET course_Id = #{courseId}, Term = #{term}, Teacher_id = #{teacherId},
+            Room = #{room}, Capacity = #{capacity}, Schedule = #{schedule}
+        WHERE section_Id = #{sectionId}
+    </update>
+
+    <!-- 获取学生成绩统计（加权平均） -->
+    <select id="getStudentGradeStatistics" parameterType="string" resultType="map">
+        SELECT 
+            COUNT(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN 1 END) as totalCount,
+            CAST(COALESCE(SUM(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN c.Credit * e.Score ELSE 0 END), 0) AS DECIMAL(10,2)) as totalScore,
+            CAST(COALESCE(SUM(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN c.Credit ELSE 0 END), 0) AS DECIMAL(10,0)) as totalCredits,
+            CASE 
+                WHEN SUM(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN c.Credit ELSE 0 END) > 0 
+                THEN CAST(ROUND(COALESCE(SUM(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN c.Credit * e.Score ELSE 0 END), 0) / SUM(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN c.Credit ELSE 0 END), 4) AS DECIMAL(7,4))
+                ELSE CAST(0 AS DECIMAL(7,4))
+            END as avgScore,
+            CAST(COALESCE(SUM(CASE WHEN e.GPA IS NOT NULL AND e.GPA >= 0 THEN c.Credit * e.GPA ELSE 0 END), 0) AS DECIMAL(10,2)) as totalGPA,
+            CASE 
+                WHEN SUM(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN c.Credit ELSE 0 END) > 0 
+                THEN CAST(ROUND(COALESCE(SUM(CASE WHEN e.GPA IS NOT NULL AND e.GPA >= 0 THEN c.Credit * e.GPA ELSE 0 END), 0) / SUM(CASE WHEN e.Score IS NOT NULL AND e.Score >= 0 THEN c.Credit ELSE 0 END), 4) AS DECIMAL(5,4))
+                ELSE CAST(0 AS DECIMAL(5,4))
+            END as avgGPA
+        FROM tblEnrollment e
+        JOIN tblStudent st ON e.student_Id = st.student_Id
+        JOIN tblSection s ON e.section_Id = s.section_Id
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE st.cardNum = #{cardNum}
+        AND e.Score IS NOT NULL 
+        AND e.Score >= 0
+    </select>
+
+    <!-- 评教相关SQL -->
+    <insert id="submitEvaluation">
+        INSERT INTO tbledu_evaluate (section_Id, student_Id, Score)
+        VALUES (#{sectionId}, #{studentId}, #{score})
+        ON DUPLICATE KEY UPDATE Score = #{score}, Eval_time = CURRENT_TIMESTAMP
+    </insert>
+
+    <select id="getEvaluationStats" parameterType="int" resultType="map">
+        SELECT 
+            COALESCE(AVG(e.Score), 0) as avgScore,
+            COUNT(DISTINCT en.student_Id) as totalCount,
+            COUNT(DISTINCT e.student_Id) as evaluatedCount
+        FROM tblEnrollment en
+        LEFT JOIN tbledu_evaluate e ON en.student_Id = e.student_Id AND en.section_Id = e.section_Id
+        WHERE en.section_Id = #{sectionId}
+    </select>
+
+    <!-- 教务管理相关SQL -->
+    <select id="getAllStudentGrades" resultType="map">
+        SELECT 
+            st.student_Id as studentId,
+            u.Name as name,
+            COALESCE(SUM(en.Score * c.Credit) / NULLIF(SUM(c.Credit), 0), 0) as avgScore,
+            COALESCE(SUM(en.GPA * c.Credit) / NULLIF(SUM(c.Credit), 0), 0) as avgGPA,
+            COUNT(en.section_Id) as courseCount
+        FROM tblStudent st
+        LEFT JOIN tblUser u ON st.cardNum = u.cardNum
+        LEFT JOIN tblEnrollment en ON st.student_Id = en.student_Id
+        LEFT JOIN tblSection s ON en.section_Id = s.section_Id
+        LEFT JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE en.Score IS NOT NULL AND en.Score >= 0
+        GROUP BY st.student_Id, u.Name
+        ORDER BY avgScore DESC
+    </select>
+
+    <select id="getAllTeacherEvaluations" resultType="map">
+        SELECT 
+            s.section_Id as sectionId,
+            COALESCE(u.Name, s.Teacher_id) as teacherName,
+            c.courseName as courseName,
+            COALESCE(AVG(e.Score), 0) as avgScore,
+            COUNT(DISTINCT e.student_Id) as evalCount
+        FROM tblSection s
+        JOIN tblCourse c ON s.course_Id = c.course_Id
+        LEFT JOIN tblStaff staff ON s.Teacher_id = staff.staff_Id OR s.Teacher_id = staff.cardNum
+        LEFT JOIN tblUser u ON staff.cardNum = u.cardNum
+        LEFT JOIN tbledu_evaluate e ON s.section_Id = e.section_Id
+        GROUP BY s.section_Id, u.Name, s.Teacher_id, c.courseName
+        ORDER BY avgScore DESC
+    </select>
+
+    <!-- 获取单个学生的平均成绩和GPA -->
+    <select id="getStudentAverageGrades" parameterType="string" resultType="map">
+        SELECT 
+            COALESCE(SUM(en.Score * c.Credit) / NULLIF(SUM(c.Credit), 0), 0) as avgScore,
+            COALESCE(SUM(en.GPA * c.Credit) / NULLIF(SUM(c.Credit), 0), 0) as avgGPA,
+            COUNT(en.section_Id) as courseCount
+        FROM tblStudent st
+        LEFT JOIN tblEnrollment en ON st.student_Id = en.student_Id
+        LEFT JOIN tblSection s ON en.section_Id = s.section_Id
+        LEFT JOIN tblCourse c ON s.course_Id = c.course_Id
+        WHERE st.student_Id = #{studentId}
+          AND en.Score IS NOT NULL 
+          AND en.Score >= 0
+    </select>
+</mapper>

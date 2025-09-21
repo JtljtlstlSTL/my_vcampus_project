@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 全局设置 -->
+    <settings>
+        <!-- 开启驼峰命名转换 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 开启延迟加载 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 开启二级缓存 -->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+    
+    <!-- 类型别名 -->
+    <typeAliases>
+        <package name="com.vcampus.common.entity"/>
+        <package name="com.vcampus.common.enums"/>
+        <package name="com.vcampus.server.core.academic.entity"/>
+        <package name="com.vcampus.server.core.library.entity.core"/>
+        <package name="com.vcampus.server.core.library.entity.view"/>
+        <package name="com.vcampus.server.core.library.entity.search"/>
+        <package name="com.vcampus.server.core.library.entity.result"/>
+        <package name="com.vcampus.server.core.library.enums"/>
+        <!-- 补充：商城模块实体包 -->
+        <package name="com.vcampus.server.core.shop.entity"/>
+        <!-- 补充：一卡通模块实体包 -->
+        <package name="com.vcampus.server.core.card.entity"/>
+    </typeAliases>
+    
+    <!-- 环境配置 -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/virtual_campus?useSSL=false&amp;serverTimezone=UTC&amp;characterEncoding=UTF-8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+    
+    <!-- 映射器 -->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/BookMapper.xml"/>
+        <mapper resource="mapper/BookBorrowMapper.xml"/>
+        <mapper resource="mapper/BookCategoryMapper.xml"/>
+        <mapper resource="mapper/BorrowRuleMapper.xml"/>
+        <!-- 显式绑定商城 XML 映射（避免包扫描重复注册） -->
+        <mapper resource="mapper/ProductMapper.xml"/>
+        <mapper resource="mapper/ProductCategoryMapper.xml"/>
+        <mapper resource="mapper/ProductTransMapper.xml"/>
+        <!-- 新增一卡通映射 -->
+        <mapper resource="mapper/CardMapper.xml"/>
+        
+        <!-- 我的书架映射文件 -->
+        <mapper resource="mapper/MyBookshelfMapper.xml"/>
+        
+        <!-- 图书荐购映射文件 -->
+        <mapper resource="mapper/BookRecommendationMapper.xml"/>
+
+        <!-- 用户个人分类Mapper接口 -->
+        <mapper class="com.vcampus.server.core.library.mapper.UserPersonalCategoryMapper"/>
+
+        <!-- 其它模块使用包扫描 -->
+        <package name="com.vcampus.server.core.auth.mapper"/>
+        <package name="com.vcampus.server.core.academic.mapper"/>
+        <package name="com.vcampus.server.core.course.mapper"/>
+    </mappers>
+</configuration>

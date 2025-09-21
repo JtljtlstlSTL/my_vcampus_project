@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcampus.server.core.shop.mapper.ProductCategoryMapper">
+
+    <resultMap id="ProductCategoryResultMap" type="com.vcampus.server.core.shop.entity.ProductCategory">
+        <id column="category_id" property="categoryId"/>
+        <result column="category_code" property="categoryCode"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="sort_order" property="sortOrder"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        category_id, category_code, category_name, sort_order
+    </sql>
+
+    <select id="findById" parameterType="int" resultMap="ProductCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProductCategory
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <select id="findAll" resultMap="ProductCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProductCategory
+        ORDER BY sort_order
+    </select>
+
+    <select id="findByCode" parameterType="string" resultMap="ProductCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProductCategory
+        WHERE category_code = #{categoryCode}
+    </select>
+
+    <select id="findByName" parameterType="string" resultMap="ProductCategoryResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tblProductCategory
+        WHERE category_name = #{categoryName}
+    </select>
+
+    <insert id="insert" parameterType="com.vcampus.server.core.shop.entity.ProductCategory" useGeneratedKeys="true" keyProperty="categoryId">
+        INSERT INTO tblProductCategory (category_code, category_name, sort_order)
+        VALUES (#{categoryCode}, #{categoryName}, #{sortOrder})
+    </insert>
+
+    <update id="update" parameterType="com.vcampus.server.core.shop.entity.ProductCategory">
+        UPDATE tblProductCategory
+        SET category_code = #{categoryCode},
+            category_name = #{categoryName},
+            sort_order = #{sortOrder}
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM tblProductCategory WHERE category_id = #{categoryId}
+    </delete>
+
+    <select id="existsById" parameterType="int" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM tblProductCategory WHERE category_id = #{categoryId}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM tblProductCategory
+    </select>
+
+</mapper>
+
