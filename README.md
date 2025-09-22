@@ -29,8 +29,6 @@
 
 ## 项目展示
 
-以下截图均来自项目根目录的 `pictures/` 目录，便于你后续替换与维护。
-
 ### 登录界面
 
 | 登录界面 |
@@ -47,9 +45,9 @@
 | --- | --- | --- |
 | <img src="pictures/store.png" alt="校园商城" width="320" /> | <img src="pictures/card.png" alt="校卡管理" width="320" /> | <img src="pictures/comunication.png" alt="校园论坛" width="320" /> |
 
-| 人脸采集 |
-| --- |
-| <img src="pictures/face.png" alt="人脸采集" width="320" /> |
+| 课程视频 | 人脸采集 |
+| --- | --- |
+| <img src="pictures/video.png" alt="课程视频" width="320" /> | <img src="pictures/face.png" alt="人脸采集" width="320" /> |
 
 
 ## 技术栈
