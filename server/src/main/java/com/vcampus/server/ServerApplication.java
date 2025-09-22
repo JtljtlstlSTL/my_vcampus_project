@@ -45,7 +45,7 @@ public class ServerApplication {
     private static void printBanner() {
         System.out.println();
         System.out.println("VCampus Virtual Campus Server v1.0.0");
-        System.out.println("https://github.com/vcampus-project");
+    System.out.println("https://github.com/JtljtlstlSTL/my_vcampus_project");
         System.out.println();
     }
     
