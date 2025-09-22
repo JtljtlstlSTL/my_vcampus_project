@@ -29,23 +29,27 @@
 
 ## 项目展示
 
+以下截图均来自项目根目录的 `pictures/` 目录，便于你后续替换与维护。
+
 ### 登录界面
 
-<p>
-	<img src="pictures/login.png" alt="登录界面" width="360" />
-</p>
+| 登录界面 |
+| --- |
+| <img src="pictures/login.png" alt="登录界面" width="600" /> |
 
 ### 课程与功能入口
 
-<p>
-	<img src="pictures/personal_details.png" alt="个人信息" width="320" />
-	<img src="pictures/lessons.png" alt="课程列表" width="320" />
-	<img src="pictures/library.png" alt="图书借阅" width="120" />
-	<img src="pictures/store.png" alt="校园商城" width="120" />
-	<img src="pictures/card.png" alt="校卡管理" width="120" />
-	<img src="pictures/comunication.png" alt="校园论坛" width="120" />
-	<img src="pictures/face.png" alt="人脸采集" width="120" />
-</p>
+| 个人信息 | 课程列表 | 图书借阅 |
+| --- | --- | --- |
+| <img src="pictures/personal_details.png" alt="个人信息" width="320" /> | <img src="pictures/lessons.png" alt="课程列表" width="320" /> | <img src="pictures/library.png" alt="图书借阅" width="320" /> |
+
+| 校园商城 | 校卡管理 | 校园论坛 |
+| --- | --- | --- |
+| <img src="pictures/store.png" alt="校园商城" width="320" /> | <img src="pictures/card.png" alt="校卡管理" width="320" /> | <img src="pictures/comunication.png" alt="校园论坛" width="320" /> |
+
+| 人脸采集 |
+| --- |
+| <img src="pictures/face.png" alt="人脸采集" width="320" /> |
 
 
 ## 技术栈
@@ -217,13 +221,14 @@ SOURCE "database/vcampus.sql";
 
 - 检查 `config/database.properties` 是否被运行时加载（classpath 下是否存在）。
 - 确认 MySQL 正在监听（Windows：`netstat -ano | findstr :3306`）。
-- 若为远程数据库，请参考 `ServerConnection.md` 配置远程访问、防火墙与 SSH 隧道。
+- 若为远程数据库，请参考 [ServerConnection.md](./ServerConnection.md) 配置远程访问、防火墙与 SSH 隧道。
 
 2) 客户端连接失败（超时或拒绝）
 
 - 确认服务端已启动，并监听正确端口（服务端控制台 `status` 可查看）。
 - 确认客户端 `server.host/server.port` 与服务端一致。
 - 本地防火墙可能阻止 8081 端口：可临时放行测试后再收紧策略。
+- 对于基本数据库操作和服务器搭建可查看 [ServerConnection.md](./ServerConnection.md)
 
 3) 视频播放报错：找不到 VLC 本地库 / JNA 加载失败
 
