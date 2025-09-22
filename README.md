@@ -32,16 +32,19 @@
 ### 登录界面
 
 <p>
-	<img src="pictures/login.jpg" alt="登录界面" width="360" />
+	<img src="pictures/login.png" alt="登录界面" width="360" />
 </p>
 
-### 课程与功能入口（示意）
+### 课程与功能入口
 
 <p>
-	<img src="pictures/login.jpg" alt="课程卡片-示例1" width="320" />
-	<img src="pictures/login.jpg" alt="课程卡片-示例2" width="320" />
-	<img src="pictures/login.jpg" alt="AI助手入口（图标示意）" width="120" />
-	<img src="pictures/login.jpg" alt="管理员入口（图标示意）" width="120" />
+	<img src="pictures/personal_details.png" alt="个人信息" width="320" />
+	<img src="pictures/lessons.png" alt="课程列表" width="320" />
+	<img src="pictures/library.png" alt="图书借阅" width="120" />
+	<img src="pictures/store.png" alt="校园商城" width="120" />
+	<img src="pictures/card.png" alt="校卡管理" width="120" />
+	<img src="pictures/comunication.png" alt="校园论坛" width="120" />
+	<img src="pictures/face.png" alt="人脸采集" width="120" />
 </p>
 
 
